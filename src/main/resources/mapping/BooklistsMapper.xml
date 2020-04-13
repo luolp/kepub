@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.keyue.dao.BooklistsMapper" >
+  <resultMap id="BaseResultMap" type="com.keyue.dao.model.Booklists" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="lists_name" property="listsName" jdbcType="VARCHAR" />
+    <result column="lists_desc" property="listsDesc" jdbcType="VARCHAR" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, lists_name, lists_desc, user_id, create_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from booklists
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from booklists
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.keyue.dao.model.Booklists" >
+    insert into booklists (id, lists_name, lists_desc, 
+      user_id, create_time)
+    values (#{id,jdbcType=INTEGER}, #{listsName,jdbcType=VARCHAR}, #{listsDesc,jdbcType=VARCHAR}, 
+      #{userId,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.keyue.dao.model.Booklists" >
+    insert into booklists
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="listsName != null" >
+        lists_name,
+      </if>
+      <if test="listsDesc != null" >
+        lists_desc,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="listsName != null" >
+        #{listsName,jdbcType=VARCHAR},
+      </if>
+      <if test="listsDesc != null" >
+        #{listsDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.keyue.dao.model.Booklists" >
+    update booklists
+    <set >
+      <if test="listsName != null" >
+        lists_name = #{listsName,jdbcType=VARCHAR},
+      </if>
+      <if test="listsDesc != null" >
+        lists_desc = #{listsDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.keyue.dao.model.Booklists" >
+    update booklists
+    set lists_name = #{listsName,jdbcType=VARCHAR},
+      lists_desc = #{listsDesc,jdbcType=VARCHAR},
+      user_id = #{userId,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

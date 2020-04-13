@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Good Thymes Virtual Grocery</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+
+<body>
+
+<p th:text="${welcomeluo}">Welcome to our grocery store!</p>
+
+<ul>
+    <li th:each="book : ${books}">
+        <span class="rank-digit" th:text="${bookStat.count}"></span>
+        <a class="bookname"  th:href="@{'/book/' + ${book.bookNo} + '.html'}" th:text="${book.bookName}" />
+        <a class="author" th:href="@{'/author/' + ${book.authorId} + '.html'}" th:text="${book.authorName}" />
+    </li>
+</ul>
+
+<div style="margin-top: 0px;">
+    <ul class="clearfix" id="left">
+        <li th:each="bookCate : ${bookCateList}">
+            <div class="category_block">
+                <div class="item_content">
+                    <div class="item_top">
+                        <p>
+                            <span class="top_categoryname" th:text="${bookCate.cateName}"></span>
+                            <a href="100.php" class="more">更多</a>
+                        </p>
+                    </div>
+                    <ul class="booklist">
+                        <li th:each="book : ${bookLists[bookCateStat.index]}">
+                            <span class="rank-digit" th:text="${bookStat.count}"></span>
+                            <a class="bookname"  th:href="@{'/book/' + ${book.bookNo} + '.html'}" th:text="${book.bookName}" />
+                            <a class="author" th:href="@{'/author/' + ${book.authorId} + '.html'}" th:text="${book.authorName}" />
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </li>
+    </ul>
+</div>
+</body>
+
+</html>

@@ -1,0 +1,53 @@
+
+.category_block{border-top: 4px #FF6D00 solid;background-color: #ffffff}
+.item_content{  border: 1px #eeeeee solid;  border-top: none;  padding: 0 18px;  }
+.item_top{  padding: 10px 0;  border-bottom: 1px solid #eeeeee;  }
+.top_categoryname{font-size: 16px;font-family: 'Microsoft YaHei', arial, sans-serif;color: #262b86}
+.booklist{  padding: 20px 0;  font-family: 'Microsoft YaHei';font-size: 16px;  }
+.bookname{  color: #000000; margin-right: 6px  }
+.author{  color: #00BFA5;  }
+.rank-digit{  display: inline-block;  width: 18px;  font-size: 12px;
+    height: 14px;  line-height: 14px;  text-align: center;
+    border-radius: 5px;  color: #ffffff;  background-color: #dcdcdc;
+    margin-right: 6px;
+}
+
+
+ul.booklist li:nth-child(1) .rank-digit{
+    background-color: #FF6D00;
+}
+ul.booklist li:nth-child(2) .rank-digit{
+    background-color: #FF9100;
+}
+ul.booklist li:nth-child(3) .rank-digit{
+    background-color: #FFAB40;
+}
+#left>li:nth-child(3n+2) .category_block{
+    border-color: #00BFA5;
+}
+#left>li:nth-child(3n+2) ul.booklist li:nth-child(1) .rank-digit{
+    background-color: #00BFA5;
+}
+#left>li:nth-child(3n+2) ul.booklist li:nth-child(2) .rank-digit{
+    background-color: #1DE9B6;
+}
+#left>li:nth-child(3n+2) ul.booklist li:nth-child(3) .rank-digit{
+    background-color: #64FFDA;
+}
+#left>li:nth-child(3n+3) .category_block{
+    border-color: #00B8D4;
+}
+#left>li:nth-child(3n+3) ul.booklist li:nth-child(1) .rank-digit{
+    background-color: #00B8D4;
+}
+#left>li:nth-child(3n+3) ul.booklist li:nth-child(2) .rank-digit{
+    background-color: #00E5FF;
+}
+#left>li:nth-child(3n+3) ul.booklist li:nth-child(3) .rank-digit{
+    background-color: #18FFFF;
+}
+
+#left>li{ margin-bottom: 20px;padding: 0 10px;}
+
+
+

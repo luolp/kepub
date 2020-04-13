@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.keyue.dao.BookMapper" >
+  <resultMap id="BaseResultMap" type="com.keyue.dao.model.Book" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="book_no" property="bookNo" jdbcType="VARCHAR" />
+    <result column="book_name" property="bookName" jdbcType="VARCHAR" />
+    <result column="author_id" property="authorId" jdbcType="INTEGER" />
+    <result column="cate_id" property="cateId" jdbcType="INTEGER" />
+    <result column="book_desc" property="bookDesc" jdbcType="VARCHAR" />
+    <result column="sort" property="sort" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="author_name" property="authorName" jdbcType="VARCHAR" />
+    <result column="cate_name" property="cateName" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, book_no, book_name, author_id, cate_id, book_desc, sort, status, create_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from book
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from book
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.keyue.dao.model.Book" >
+    insert into book (id, book_no, book_name, 
+      author_id, cate_id, book_desc, 
+      sort, status, create_time
+      )
+    values (#{id,jdbcType=INTEGER}, #{bookNo,jdbcType=VARCHAR}, #{bookName,jdbcType=VARCHAR}, 
+      #{authorId,jdbcType=INTEGER}, #{cateId,jdbcType=INTEGER}, #{bookDesc,jdbcType=VARCHAR}, 
+      #{sort,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.keyue.dao.model.Book" >
+    insert into book
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="bookNo != null" >
+        book_no,
+      </if>
+      <if test="bookName != null" >
+        book_name,
+      </if>
+      <if test="authorId != null" >
+        author_id,
+      </if>
+      <if test="cateId != null" >
+        cate_id,
+      </if>
+      <if test="bookDesc != null" >
+        book_desc,
+      </if>
+      <if test="sort != null" >
+        sort,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="bookNo != null" >
+        #{bookNo,jdbcType=VARCHAR},
+      </if>
+      <if test="bookName != null" >
+        #{bookName,jdbcType=VARCHAR},
+      </if>
+      <if test="authorId != null" >
+        #{authorId,jdbcType=INTEGER},
+      </if>
+      <if test="cateId != null" >
+        #{cateId,jdbcType=INTEGER},
+      </if>
+      <if test="bookDesc != null" >
+        #{bookDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="sort != null" >
+        #{sort,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.keyue.dao.model.Book" >
+    update book
+    <set >
+      <if test="bookNo != null" >
+        book_no = #{bookNo,jdbcType=VARCHAR},
+      </if>
+      <if test="bookName != null" >
+        book_name = #{bookName,jdbcType=VARCHAR},
+      </if>
+      <if test="authorId != null" >
+        author_id = #{authorId,jdbcType=INTEGER},
+      </if>
+      <if test="cateId != null" >
+        cate_id = #{cateId,jdbcType=INTEGER},
+      </if>
+      <if test="bookDesc != null" >
+        book_desc = #{bookDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="sort != null" >
+        sort = #{sort,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.keyue.dao.model.Book" >
+    update book
+    set book_no = #{bookNo,jdbcType=VARCHAR},
+      book_name = #{bookName,jdbcType=VARCHAR},
+      author_id = #{authorId,jdbcType=INTEGER},
+      cate_id = #{cateId,jdbcType=INTEGER},
+      book_desc = #{bookDesc,jdbcType=VARCHAR},
+      sort = #{sort,jdbcType=INTEGER},
+      status = #{status,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <select id="queryBooksByCateId" resultMap="BaseResultMap" >
+ SELECT
+	book.id as id,
+	book_no,
+	book_name,
+	book_desc,
+	author_id,
+	cate_id,
+	author_name,
+	cate_name
+FROM
+	book,
+	author,
+	book_cate
+WHERE
+	cate_id = #{cateId,jdbcType=INTEGER}
+AND book.author_id = author.id
+AND book.cate_id = book_cate.id
+AND book.`status` = 1
+ORDER BY
+	book.sort DESC,
+	book.id DESC
+LIMIT #{limitCount,jdbcType=INTEGER}
+  </select>
+
+  <select id="searchBooks" resultMap="BaseResultMap" >
+ SELECT
+	book.id as id,
+	book_no,
+	book_name,
+	book_desc,
+	author_id,
+	cate_id,
+	author_name,
+	cate_name
+FROM
+	book,
+	author,
+	book_cate
+WHERE
+1=1
+    <if test="cateId!=null">
+      AND cate_id = #{cateId,jdbcType=INTEGER}
+    </if >
+    <if test="keyword!=null and keyword != ''">
+      AND (author_name like #{keyword} or book_name like #{keyword})
+    </if >
+AND book.author_id = author.id
+AND book.cate_id = book_cate.id
+AND book.`status` = 1
+ORDER BY
+	book.sort DESC,
+	book.id DESC
+  </select>
+
+  <select id="queryBooksCountByCateId" resultType="java.lang.Integer" parameterType="java.lang.Integer" >
+ SELECT
+  count(*)
+FROM
+	book,
+	author,
+	book_cate
+WHERE
+	cate_id = #{cateId,jdbcType=INTEGER}
+AND book.author_id = author.id
+AND book.cate_id = book_cate.id
+AND book.`status` = 1
+  </select>
+
+</mapper>

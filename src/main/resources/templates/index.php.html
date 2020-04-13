@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>页阅</title>
+    <meta name="keywords"
+          content="liulangcat,页阅,在线阅读,公共版权书籍">
+    <meta name="description"
+          content="页阅是一个在线阅读网站。包含现当代文学,散文随笔,外国文学,短篇小说,古代文学等">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+
+    <link href="libs/font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="css/base.css?v=2" rel="stylesheet">
+    <link href="css/content_left.css" rel="stylesheet">
+    <link href="css/page/index.css?v=5" rel="stylesheet">
+	<script src="http://liulangcat.com/js/jquery.min.js"></script>
+
+</head>
+<body>
+
+<!--顶部 start-->
+<div class="top-bar">
+    <a class="logo" href="/">页阅</a>
+    <div class="r">
+        <i class="fa fa-refresh top_icon" onclick="location.href='suiji.php?time=<?=time() ?>';"></i>
+        <i class="fa fa-search top_icon" onclick="location.href='search.html';"></i>
+        <!--<i class="fa fa-user-o top_icon" onclick="location.href='/user/center.php';"></i>-->
+    </div>
+</div>
+<!--顶部 end-->
+<!-- 中间区域 start -->
+<div style="margin:10px" id="ad1"><img src="./images/tb_img1.png" style="width:100%;"></div>
+<div style="margin-top: 0px;">
+    <ul class="clearfix" id="left">
+        <li th:each="bookCate : ${bookCateList}">
+            <div class="category_block">
+                <div class="item_content">
+                    <div class="item_top">
+                        <p>
+                            <span class="top_categoryname" th:text="${bookCate.cateName}"></span>
+                            <a class="more" th:href="@{'categoryIndex.html?cateId=' + ${bookCate.id}}" >更多</a>
+                        </p>
+                    </div>
+                    <ul class="booklist">
+                        <li th:each="book : ${bookLists[bookCateStat.index]}">
+                            <span class="rank-digit" th:text="${bookStat.count}"></span>
+                            <a class="bookname"  th:href="@{'/book/' + ${book.bookNo} + '.html'}" th:text="${book.bookName}" />
+                            <a class="author" th:href="@{'/author/' + ${book.authorId} + '.html'}" th:text="${book.authorName}" />
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </li>
+    </ul>
+</div>
+
+
+<!-- 中间区域 end -->
+<!--底部 start-->
+<div class="bottom-b">
+    <div class="bottom-nav">
+        <a href="http://liulangcat.com/index.php?is_pc=1"><i class="fa fa-tv"></i>&nbsp;电脑版</a>
+        <a href="http://liulangcat.com/message.php"><i class="fa fa-comments-o"></i>&nbsp;留言反馈</a>
+        <a onclick="goTop()">回顶部&nbsp;<i class="fa fa-angle-double-up"></i></a>
+    </div>
+    <div class="bottom-right">联系方式：llp_liulangcat@qq.com</div>
+    <!--<div>友情链接：<a href="http://youymall.com/" target="_blank" style="color:#000000" >有余网</a></div>-->
+</div>
+<script type="text/javascript">
+    function goTop(){
+        scrollTo(0,0);
+    }
+</script>
+<!--底部 end-->
+<!-- 流量统计 -->
+<div style="display:none">
+    <script type="text/javascript">
+        var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+        document.write(unescape("%3Cspan id='cnzz_stat_icon_1256702543'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s95.cnzz.com/z_stat.php%3Fid%3D1256702543' type='text/javascript'%3E%3C/script%3E"));
+    </script>
+</div>
+    <script>
+        $(function(){
+            $("#ad1").click(function(){
+                $.ajax({
+                    url :"http://106.14.220.17:8070/Operation/adClick",
+                    type : "POST",
+                    data : {"adId":"1", "showPage":"home"},
+                    dataType : "json",
+                    success : function(result) {
+
+                    }
+                })
+                window.open("https://t.asczwa.com/taobao?backurl=https://shop381624038.m.taobao.com/","_blank");
+            });
+        });
+    </script>
+</body>
+</html>

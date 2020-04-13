@@ -1,0 +1,135 @@
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+
+<html>
+<head>
+    <title>liulangcat_搜索</title>
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+    <meta name="keywords" content="书籍搜索，搜小说，搜作者">
+    <link href="libs/font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="css/base.css" rel="stylesheet">
+    <link href="css/page/search.css" rel="stylesheet">
+    <script src="libs/jquery-3.2.1.min.js"></script>
+</head>
+<body>
+<!--顶部 start-->
+<div class="top-b">
+    <div class="top-bar-2">
+        <i class="fa fa-angle-left back"></i>
+        <div class="search-b" >
+            <form class="search-form" action="" method="get" th:inline="text">
+            <input class="search-input" type="text" name="keyword" placeholder="输入书名、作者" value="[[${keyword}]]">
+            </form>
+            <i class="fa fa-search submit"></i>
+        </div>
+    </div>
+</div>
+<!--顶部 end-->
+<!-- 中间区域 start -->
+<div class="center-b">
+    <ul class="result-list">
+        <li th:each="book : ${books}">
+            <div class="info" th:data_href="@{'/book/' + ${book.bookNo} + '.html'}">
+                <a class="bookname" th:href="@{'/book/' + ${book.bookNo} + '.html'}" th:text="${book.bookName}" />
+                <a class="author" th:href="@{'/author/' + ${book.authorId} + '.html'}" th:text="${book.authorName}" />
+            </div>
+            <div class="desc" th:text="${book.bookDesc}" />
+        </li>
+        <li class="next-page" hidden><span hidden><i class="fa fa-spinner fa-spin"></i></span><span>下一页&nbsp;&nbsp;<i class="fa fa-caret-down"></i></span></li>
+    </ul>
+    <dl class="hot-search-b">
+        <dt>大家都在搜</dt>
+        <dd>
+            <a th:each="hotSearch : ${hotSearchList}" th:text = "${hotSearch}"></a>
+        </dd>
+    </dl>
+</div>
+<input class="current-page" type="hidden" value="0">
+<!-- 中间区域 end -->
+<!-- 流量统计 -->
+<div style="display:none">
+    <script type="text/javascript">
+        var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+        document.write(unescape("%3Cspan id='cnzz_stat_icon_1256702543'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s95.cnzz.com/z_stat.php%3Fid%3D1256702543' type='text/javascript'%3E%3C/script%3E"));
+    </script>
+<div>
+<script type="text/javascript" th:inline="javascript">
+    $(function(){
+        // 标识正在加载下一页
+        var flag=1;
+        // 返回
+        $(".back").click(function(){
+            location.href="index.html";
+        });
+        // 搜索
+        $(".submit").click(function(){
+            var keyword=$(".search-input").val();
+            if(keyword==""){
+                $(".search-input").focus();
+                return false;
+            }
+            $(".search-form").submit();
+        });
+        // 热门搜索a标签
+        $(".hot-search-b a").click(function(){
+            var keyword=$(this).html();
+            $(".search-input").val(keyword);
+            $(".search-form").submit();
+        });
+        // 下一页
+        $(".next-page").click(function(){
+            if(flag==0){
+                return false;
+            }
+            flag=0;
+            $(".next-page>span:first-child").show();
+            $(".next-page>span:last-child").hide();
+            var c_page=$(".current-page").val();
+            c_page=parseInt(c_page)+1;
+            $.ajax({
+                url:'get/get_search_result?page='+c_page+'&keyword=' + /*[[${keyword}]]*/"",
+                dataType:'json',
+                success:function(result){
+                    var html="";
+                    $.each(result, function(index,item)
+                    {
+                        html="<li><div class=\"info\" data-href=\"/book/" +item.bookNo+".html\">";
+                        html+="<a class=\"bookname\" href=\"/book/" +item.bookNo+".html\">"+item.bookName+"</a>";
+                        html+="<a class=\"author\" href=\"/author/"+item.authorId + ".html\">" + "["+item.authorName+"]</a>";
+                        html+="</div>";
+                        html+="<div class=\"desc\">"+item.bookDesc+"</div>";
+                        html+="</li>";
+                        $(".next-page").before(html);
+                    });
+                    $(".current-page").val(c_page);
+                },
+                complete:function(){
+                    $(".next-page>span:first-child").hide();
+                    $(".next-page>span:last-child").show();
+                    toggle_next_page();
+                    flag=1;
+                }
+            })
+
+        });
+        // 根据总的条数和已经查询出来的条数显示或隐藏“下一页”
+        function toggle_next_page(){
+            var temp=$(".result-list>li");
+            var count=temp.length-1;//减去"下一页"的li
+            var countAll = /*[[${countAll}]]*/100
+            if(count < countAll){
+                // 还有未加载的
+                $(".next-page").show();
+            }else{
+                $(".next-page").hide();
+            }
+        }
+        // 跳转到书籍章节列表页 (这种写法可以对js加入的元素绑定事件)
+        $(document).on("click",'.info',function(){
+            var href = $(this).data('href');
+            location.href=href;
+        });
+        toggle_next_page();
+    });
+</script>
+</body>
+</html>

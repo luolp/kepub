@@ -1,0 +1,122 @@
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head th:inline="text">
+    <title >页阅_[[${bookCateName}]]</title>
+    <link href="/libs/font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="/css/base.css" rel="stylesheet">
+    <link href="/css/page/search.css?v=2" rel="stylesheet">
+    <script src="/libs/jquery-3.2.1.min.js"></script>
+    <meta name="keywords"
+          content="页阅,[[${bookCateName}]],书籍列表">
+    <meta name="description"
+          content="页阅，[[${bookCateName}]]">
+	<meta name="viewport" content="initial-scale=1, maximum-scale=1">
+</head>
+<body>
+<!--顶部 start-->
+<div class="top-b">
+    <div class="top-bar-2">
+        <i class="fa fa-angle-left back"></i>
+        <div class="search-b" th:text="${bookCateName}"></div>
+    </div>
+</div>
+<!--顶部 end-->
+<!-- 中间区域 start -->
+<div class="center-b">
+    <div style="margin-bottom: 6px;margin-right:4px;text-align: right;color: #999">共&nbsp;<span style="color: #00BFA5" th:text="${countAll}"></span>&nbsp;本</div>
+    <ul class="result-list">
+        <li th:each="book : ${books}">
+            <div class="info" th:data_href="@{'/book/' + ${book.bookNo} + '.html'}">
+                <a class="bookname" th:href="@{'/book/' + ${book.bookNo} + '.html'}" th:text="${book.bookName}" />
+                <a class="author" th:href="@{'/author/' + ${book.authorId} + '.html'}" th:text="${book.authorName}" />
+            </div>
+            <div class="desc" th:text="${book.bookDesc}" />
+        </li>
+        <li class="next-page" hidden><span hidden><i class="fa fa-spinner fa-spin"></i></span><span>下一页&nbsp;&nbsp;<i class="fa fa-caret-down"></i></span></li>
+    </ul>
+</div>
+<input class="current-page" type="hidden" value="0">
+<!-- 中间区域 end -->
+<script type="text/javascript" th:inline="javascript">
+    $(function(){
+        // 标识正在加载下一页
+        var flag=1;
+        // 返回
+        $(".back").click(function(){
+            location.href="index.html";
+        });
+        // 搜索
+        $(".submit").click(function(){
+            var keyword=$(".search-input").val();
+            if(keyword==""){
+                $(".search-input").focus();
+                return false;
+            }
+            $(".search-form").submit();
+        });
+        // 热门搜索a标签
+        $(".hot-search-b a").click(function(){
+            var keyword=$(this).html();
+            $(".search-input").val(keyword);
+            $(".search-form").submit();
+        });
+        // 下一页
+        $(".next-page").click(function(){
+            if(flag==0){
+                return false;
+            }
+            flag=0;
+            $(".next-page>span:first-child").show();
+            $(".next-page>span:last-child").hide();
+            var c_page=$(".current-page").val();
+            c_page=parseInt(c_page)+1;
+            $.ajax({
+                url:'/get/get_search_result?page='+c_page+'&categoryid='+/*[[${cateId}]]*/"",
+                dataType:'json',
+                success:function(result){
+                    var html="";
+                    $.each(result, function(index,item)
+                    {
+                        html="<li><div class=\"info\" data-href=\"/book/" +item.bookNo+".html\">";
+                        html+="<a class=\"bookname\" href=\"/book/" +item.bookNo+".html\">"+item.bookName+"</a>";
+                        html+="<a class=\"author\" href=\"/author/"+item.authorId + ".html\">"["+item.authorName+"]</a>";
+                        html+="</div>";
+                        html+="<div class=\"desc\">"+item.bookDesc+"</div>";
+                        html+="</li>";
+                        $(".next-page").before(html);
+                    });
+                    $(".current-page").val(c_page);
+                },
+                complete:function(){
+                    $(".next-page>span:first-child").hide();
+                    $(".next-page>span:last-child").show();
+                    toggle_next_page();
+                    flag=1;
+                }
+            })
+
+        });
+        // 根据总的条数和已经查询出来的条数显示或隐藏“下一页”
+        function toggle_next_page(){
+            var temp=$(".result-list>li");
+            var count=temp.length-1;//减去"下一页"的li
+            var countAll = /*[[${countAll}]]*/100
+            if(count < countAll){
+                // 还有未加载的
+                $(".next-page").show();
+            }else{
+                $(".next-page").hide();
+            }
+        }
+        // 跳转到书籍章节列表页 (这种写法可以对js加入的元素绑定事件)
+        $(document).on("click",'.info',function(){
+            var href = $(this).data('href');
+            location.href=href;
+        });
+
+        toggle_next_page();
+    });
+</script>
+
+
+</body>
+</html>
