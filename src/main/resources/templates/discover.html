@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+	
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<script src="/libs/jquery-3.2.1.min.js"></script>
+	<title>随机阅读</title>
+	<link href="/libs/font-awesome/css/font-awesome.css" rel="stylesheet">
+</head>
+<style>
+    *{
+        font-family: "Microsoft YaHei";
+    }
+	a{
+		text-decoration:none;color: #262b86;
+	}
+	ul{
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+	li{
+		list-style-type: none;
+	}
+.main_block{ border-top: 4px #FF6D00 solid;  background-color: #ffffff}
+.category_block{ border-top: 1px #eeeeee solid;  background-color: #ffffff}
+
+.item_content{  border: 1px #eeeeee solid;  border-top: none;  padding: 0 18px;  }
+.item_top{  padding: 10px 0;  border-bottom: 1px solid #eeeeee;  }
+.top_categoryname,.top_right_a{font-size: 16px;font-family: 'Microsoft YaHei', arial, sans-serif;color: #262b86}
+.top_right_a{float:right}
+ul.booklist{
+	padding:1em 2em 2em 2em;
+}
+
+
+.rank-digit{  display: inline-block;  width: 18px;  font-size: 12px;
+    height: 14px;  line-height: 14px;  text-align: center;
+    border-radius: 5px;  color: #ffffff;  background-color: #dcdcdc;
+    margin-right: 6px;
+}
+
+.author{color: #00BFA5;}
+
+</style>
+<body>
+	<div class="main_block">
+        <div class="item_content">
+		
+            <div class="item_top">
+				<p style="text-align:right;margin:0;">
+					<i class="fa fa-refresh" style="padding:10px;padding-right:20px;" onclick="location.href='discover.html';"></i>
+                </p>
+            </div>
+			
+			<div style="padding-top:0.5em">
+				
+				<div style='line-height:1.5em;text-align:justify;text-justify:distribute;' th:inline="text">
+					[[${book}]]
+				</div>
+				
+			</div>
+			<div>
+				<p style="text-align:right;margin:0;">
+					<i class="fa fa-refresh" style="padding:10px;padding-right:20px;" onclick="location.href='discover.html';"></i>
+                </p>
+            </div>
+			<div style='line-height:80px;padding-right:20px;text-align:right;'>
+				<a th:href="@{${book.bookFilePath}}" th:text="${book.bookName}"> </a><a class=\"author\" th:href="@{${book.authorPagePath}}" hidden>作者</a>
+			</div>
+			
+        </div>
+		
+    </div>
+	
+
+
+<!-- 流量统计 -->
+<div style="display:none">
+    <script type="text/javascript">
+        var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+        document.write(unescape("%3Cspan id='cnzz_stat_icon_1256702543'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s95.cnzz.com/z_stat.php%3Fid%3D1256702543' type='text/javascript'%3E%3C/script%3E"));
+    </script>
+<div>
+
+</body>
+<script>
+	function goHome(){
+		document.location.href="/index.html";
+	}
+</script>
+</html>

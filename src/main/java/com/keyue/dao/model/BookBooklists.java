@@ -1,9 +1,9 @@
 package com.keyue.dao.model;
 
-public class BookBooklistsKey {
+public class BookBooklists {
     private Integer listsId;
 
-    private Integer bookId;
+    private String bookNo;
 
     public Integer getListsId() {
         return listsId;
@@ -13,11 +13,11 @@ public class BookBooklistsKey {
         this.listsId = listsId;
     }
 
-    public Integer getBookId() {
-        return bookId;
+    public String getBookNo() {
+        return bookNo;
     }
 
-    public void setBookId(Integer bookId) {
-        this.bookId = bookId;
+    public void setBookNo(String bookNo) {
+        this.bookNo = bookNo == null ? null : bookNo.trim();
     }
 }

@@ -28,9 +28,9 @@
 <div class="center-b">
     <ul class="result-list">
         <li th:each="book : ${books}">
-            <div class="info" th:data_href="@{'/book/' + ${book.bookNo} + '.html'}">
-                <a class="bookname" th:href="@{'/book/' + ${book.bookNo} + '.html'}" th:text="${book.bookName}" />
-                <a class="author" th:href="@{'/author/' + ${book.authorId} + '.html'}" th:text="${book.authorName}" />
+            <div class="info" th:data_href="@{${book.bookFilePath}}">
+                <a class="bookname" th:href="@{${book.bookFilePath}}" th:text="${book.bookName}" />
+                <a class="author" th:href="@{${book.authorPagePath}}" th:text="${book.authorName}" />
             </div>
             <div class="desc" th:text="${book.bookDesc}" />
         </li>
@@ -92,9 +92,9 @@
                     var html="";
                     $.each(result, function(index,item)
                     {
-                        html="<li><div class=\"info\" data-href=\"/book/" +item.bookNo+".html\">";
-                        html+="<a class=\"bookname\" href=\"/book/" +item.bookNo+".html\">"+item.bookName+"</a>";
-                        html+="<a class=\"author\" href=\"/author/"+item.authorId + ".html\">" + "["+item.authorName+"]</a>";
+                        html="<li><div class=\"info\" data-href=\"" +item.bookFilePath+"\">";
+                        html+="<a class=\"bookname\" href=\"" +item.bookFilePath+"\">"+item.bookName+"</a>";
+                        html+="<a class=\"author\" href=\""+item.authorPagePath + "\">" + "["+item.authorName+"]</a>";
                         html+="</div>";
                         html+="<div class=\"desc\">"+item.bookDesc+"</div>";
                         html+="</li>";

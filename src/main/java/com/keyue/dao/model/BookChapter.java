@@ -5,7 +5,7 @@ import java.util.Date;
 public class BookChapter {
     private Integer id;
 
-    private Integer bookId;
+    private String bookNo;
 
     private Integer chapterNo;
 
@@ -29,12 +29,12 @@ public class BookChapter {
         this.id = id;
     }
 
-    public Integer getBookId() {
-        return bookId;
+    public String getBookNo() {
+        return bookNo;
     }
 
-    public void setBookId(Integer bookId) {
-        this.bookId = bookId;
+    public void setBookNo(String bookNo) {
+        this.bookNo = bookNo == null ? null : bookNo.trim();
     }
 
     public Integer getChapterNo() {

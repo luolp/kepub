@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+
+<head th:inline="text">
+    <meta charset="UTF-8">
+	
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<script src="libs/jquery-3.2.1.min.js"></script>
+	<title>[[${book.bookName}]] [[${currentChapter.chapterName}]]</title>
+
+</head>
+<style>
+    *{
+        font-family: "Microsoft YaHei";
+    }
+	a{
+		text-decoration:none;color: #262b86;
+	}
+	ul{
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+	li{
+		list-style-type: none;
+	}
+.main_block{ border-top: 4px #FF6D00 solid;  background-color: #ffffff}
+.category_block{ border-top: 1px #eeeeee solid;  background-color: #ffffff}
+
+.item_content{  border: 1px #eeeeee solid;  border-top: none;  padding: 0 18px;  }
+.item_top{  padding: 10px 0;  border-bottom: 1px solid #eeeeee;  }
+.top_categoryname,.top_right_a{font-size: 16px;font-family: 'Microsoft YaHei', arial, sans-serif;color: #262b86}
+.top_right_a{float:right}
+ul.booklist{
+	padding:1em 2em 2em 2em;
+}
+
+
+.rank-digit{  display: inline-block;  width: 18px;  font-size: 12px;
+    height: 14px;  line-height: 14px;  text-align: center;
+    border-radius: 5px;  color: #ffffff;  background-color: #dcdcdc;
+    margin-right: 6px;
+}
+
+	#goods_block>div{background-color: #f5f5f5;height: 92px;border-radius: 8px;}
+	#goods_block img{width: 80px;height: 80px;float: left;margin: 6px;}
+	.goods_info{margin-left: 92px;padding: 6px;}
+	.goods_info>.goods_title{padding: 6px 0 0 0;margin: 0;}
+	.goods_info>.goods_price{padding: 6px 0 0 0;margin: 0;color: #f40;}
+	.goods_price>span:first-child{font-size: 0.8em;}
+	.goods_price>span:last-child{font-size: 1.2em;}
+	.goods_info>.goods_title{
+		text-overflow: ellipsis;
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+	}
+</style>
+<body>
+	<div class="main_block">
+        <div class="item_content">
+            <div class="item_top">
+                <p>
+                    <span class="top_categoryname" th:text="${book.bookName}"></span>
+					<span class="top_right_a"><a href="javascript:;" onclick="goHome()">主页</a></span>
+                </p>
+
+				<p>
+                    <span class="top_categoryname" th:text="${currentChapter.chapterName}"></span>
+					<span class="top_right_a"><a th:href="@{${book.bookFilePath}}">目录</a></span>
+                </p>
+
+            </div>
+			
+			<div style="margin-top:0.5em">
+
+				<div style='line-height:1.5em;text-align:justify;text-justify:distribute;' th:inline = "text">
+					[[${content}]]
+				</div>
+			</div>
+        </div>
+
+		<p style="height: 21px;">
+            <!--<span class="bottom_left_a" th:if="${preChapter == null}}"><a th:href="@{'/reader.html?bookNo=' + ${book.bookNo} + '&chaptherNum=' + ${preChapter.chapterNo}}">上一章</a></span>-->
+			<!--<span class="top_right_a" th:if="${nextChapter == null}}"><a th:href="@{'/reader.html?bookNo=' + ${book.bookNo} + '&chaptherNum=' + ${nextChapter.chapterNo}}">下一章</a></span>-->
+			<!--<span class="top_right_a" th:if="${nextChapter != null}}">完</span>-->
+        </p>
+    </div>
+	<div id="goods_block">
+
+	</div>
+<!-- 流量统计 -->
+<div style="display:none">
+    <script type="text/javascript">
+        var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+        document.write(unescape("%3Cspan id='cnzz_stat_icon_1256702543'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s95.cnzz.com/z_stat.php%3Fid%3D1256702543' type='text/javascript'%3E%3C/script%3E"));
+    </script>
+</div>
+
+</body>
+<script>
+
+	function goHome(){
+		document.location.href="/index.html";
+	}
+	$(function(){
+		$("#goods_block").on('click','.goods_item',function(){
+			var ad_id = $(this).data("id");
+			var goods_id = $(this).data("gid");
+			$.ajax({
+				url :"http://106.14.220.17:8070/Operation/adGoodsClick",
+				type : "POST",
+				data : {"adId":ad_id, "showPage":"<?=$book ?>_<?=$chapter ?>"},//todo
+				dataType : "json",
+				success : function(result) {
+
+				}
+			})
+			window.open("https://t.asczwa.com/taobao?backurl=https%3a%2f%2fh5.m.taobao.com%2fawp%2fcore%2fdetail.htm%3fid%3d"+goods_id,"_blank");
+		});
+		if(true){	//该html只是阅读页面,不含目录页
+			$.ajax({
+				url :"http://106.14.220.17:8070/Operation/getRandomAdGoods",
+				type : "GET",
+				dataType : "json",
+				success : function(result) {
+					var data = result.data;
+					var html ='<div class="goods_item" data-id="'+data.id+'" data-gid="'+data.goodsId+'">'
+							+ '<img src="'+data.goodsImg+'">'
+							+ '<div class="goods_info">'
+							+ '<p class="goods_title">'+data.goodsName+'</p>'
+							+ '<p class="goods_price"><span>¥</span> <span>'+data.goodsPrice+'</span></p>'
+							+ '</div>'
+							+ '</div>';
+					$("#goods_block").html(html);
+				}
+			})
+		}
+	});
+</script>
+</html>

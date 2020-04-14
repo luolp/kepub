@@ -1,36 +1,58 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.keyue.dao.BookBooklistsMapper" >
-  <resultMap id="BaseResultMap" type="com.keyue.dao.model.BookBooklistsKey" >
+  <resultMap id="BaseResultMap" type="com.keyue.dao.model.BookBooklists" >
     <id column="lists_id" property="listsId" jdbcType="INTEGER" />
-    <id column="book_id" property="bookId" jdbcType="INTEGER" />
+    <result column="book_no" property="bookNo" jdbcType="VARCHAR" />
   </resultMap>
-  <delete id="deleteByPrimaryKey" parameterType="com.keyue.dao.model.BookBooklistsKey" >
+  <sql id="Base_Column_List" >
+    lists_id, book_no
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from book_booklists
+    where lists_id = #{listsId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from book_booklists
     where lists_id = #{listsId,jdbcType=INTEGER}
-      and book_id = #{bookId,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.keyue.dao.model.BookBooklistsKey" >
-    insert into book_booklists (lists_id, book_id)
-    values (#{listsId,jdbcType=INTEGER}, #{bookId,jdbcType=INTEGER})
+  <insert id="insert" parameterType="com.keyue.dao.model.BookBooklists" >
+    insert into book_booklists (lists_id, book_no)
+    values (#{listsId,jdbcType=INTEGER}, #{bookNo,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.keyue.dao.model.BookBooklistsKey" >
+  <insert id="insertSelective" parameterType="com.keyue.dao.model.BookBooklists" >
     insert into book_booklists
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="listsId != null" >
         lists_id,
       </if>
-      <if test="bookId != null" >
-        book_id,
+      <if test="bookNo != null" >
+        book_no,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="listsId != null" >
         #{listsId,jdbcType=INTEGER},
       </if>
-      <if test="bookId != null" >
-        #{bookId,jdbcType=INTEGER},
+      <if test="bookNo != null" >
+        #{bookNo,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.keyue.dao.model.BookBooklists" >
+    update book_booklists
+    <set >
+      <if test="bookNo != null" >
+        book_no = #{bookNo,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where lists_id = #{listsId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.keyue.dao.model.BookBooklists" >
+    update book_booklists
+    set book_no = #{bookNo,jdbcType=VARCHAR}
+    where lists_id = #{listsId,jdbcType=INTEGER}
+  </update>
 </mapper>

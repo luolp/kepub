@@ -3,7 +3,7 @@
 <mapper namespace="com.keyue.dao.BookChapterMapper" >
   <resultMap id="BaseResultMap" type="com.keyue.dao.model.BookChapter" >
     <id column="id" property="id" jdbcType="INTEGER" />
-    <result column="book_id" property="bookId" jdbcType="INTEGER" />
+    <result column="book_no" property="bookNo" jdbcType="VARCHAR" />
     <result column="chapter_no" property="chapterNo" jdbcType="INTEGER" />
     <result column="chapter_name" property="chapterName" jdbcType="VARCHAR" />
     <result column="chapter_no_2" property="chapterNo2" jdbcType="INTEGER" />
@@ -13,7 +13,7 @@
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, book_id, chapter_no, chapter_name, chapter_no_2, father_no, is_has_content, file_url, 
+    id, book_no, chapter_no, chapter_name, chapter_no_2, father_no, is_has_content, file_url, 
     create_time
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -27,11 +27,11 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.keyue.dao.model.BookChapter" >
-    insert into book_chapter (id, book_id, chapter_no, 
+    insert into book_chapter (id, book_no, chapter_no, 
       chapter_name, chapter_no_2, father_no, 
       is_has_content, file_url, create_time
       )
-    values (#{id,jdbcType=INTEGER}, #{bookId,jdbcType=INTEGER}, #{chapterNo,jdbcType=INTEGER}, 
+    values (#{id,jdbcType=INTEGER}, #{bookNo,jdbcType=VARCHAR}, #{chapterNo,jdbcType=INTEGER}, 
       #{chapterName,jdbcType=VARCHAR}, #{chapterNo2,jdbcType=INTEGER}, #{fatherNo,jdbcType=INTEGER}, 
       #{isHasContent,jdbcType=INTEGER}, #{fileUrl,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}
       )
@@ -42,8 +42,8 @@
       <if test="id != null" >
         id,
       </if>
-      <if test="bookId != null" >
-        book_id,
+      <if test="bookNo != null" >
+        book_no,
       </if>
       <if test="chapterNo != null" >
         chapter_no,
@@ -71,8 +71,8 @@
       <if test="id != null" >
         #{id,jdbcType=INTEGER},
       </if>
-      <if test="bookId != null" >
-        #{bookId,jdbcType=INTEGER},
+      <if test="bookNo != null" >
+        #{bookNo,jdbcType=VARCHAR},
       </if>
       <if test="chapterNo != null" >
         #{chapterNo,jdbcType=INTEGER},
@@ -100,8 +100,8 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.keyue.dao.model.BookChapter" >
     update book_chapter
     <set >
-      <if test="bookId != null" >
-        book_id = #{bookId,jdbcType=INTEGER},
+      <if test="bookNo != null" >
+        book_no = #{bookNo,jdbcType=VARCHAR},
       </if>
       <if test="chapterNo != null" >
         chapter_no = #{chapterNo,jdbcType=INTEGER},
@@ -129,7 +129,7 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.keyue.dao.model.BookChapter" >
     update book_chapter
-    set book_id = #{bookId,jdbcType=INTEGER},
+    set book_no = #{bookNo,jdbcType=VARCHAR},
       chapter_no = #{chapterNo,jdbcType=INTEGER},
       chapter_name = #{chapterName,jdbcType=VARCHAR},
       chapter_no_2 = #{chapterNo2,jdbcType=INTEGER},
@@ -139,4 +139,12 @@
       create_time = #{createTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+  <select id="queryChapterListByBookNo" resultMap="BaseResultMap"  >
+    select
+    <include refid="Base_Column_List" />
+    from book_chapter
+    where book_no = #{bookNo}
+  </select>
+
 </mapper>

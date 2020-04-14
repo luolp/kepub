@@ -13,7 +13,7 @@
     <link href="css/base.css?v=2" rel="stylesheet">
     <link href="css/content_left.css" rel="stylesheet">
     <link href="css/page/index.css?v=5" rel="stylesheet">
-	<script src="http://liulangcat.com/js/jquery.min.js"></script>
+	<script src="libs/jquery-3.2.1.min.js"></script>
 
 </head>
 <body>
@@ -22,7 +22,7 @@
 <div class="top-bar">
     <a class="logo" href="/">页阅</a>
     <div class="r">
-        <i class="fa fa-refresh top_icon" onclick="location.href='suiji.php?time=<?=time() ?>';"></i>
+        <i class="fa fa-refresh top_icon" onclick="location.href='discover.html';"></i>
         <i class="fa fa-search top_icon" onclick="location.href='search.html';"></i>
         <!--<i class="fa fa-user-o top_icon" onclick="location.href='/user/center.php';"></i>-->
     </div>
@@ -44,8 +44,8 @@
                     <ul class="booklist">
                         <li th:each="book : ${bookLists[bookCateStat.index]}">
                             <span class="rank-digit" th:text="${bookStat.count}"></span>
-                            <a class="bookname"  th:href="@{'/book/' + ${book.bookNo} + '.html'}" th:text="${book.bookName}" />
-                            <a class="author" th:href="@{'/author/' + ${book.authorId} + '.html'}" th:text="${book.authorName}" />
+                            <a class="bookname"  th:href="@{${book.bookFilePath}}" th:text="${book.bookName}" />
+                            <a class="author" th:href="@{${book.authorPagePath}}" th:text="${book.authorName}" />
                         </li>
                     </ul>
                 </div>

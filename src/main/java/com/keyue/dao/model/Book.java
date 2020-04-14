@@ -115,4 +115,11 @@ public class Book {
         this.cateName = cateName;
     }
 
+    public String getBookFilePath() {
+        return "/book/" + bookNo ;
+    }
+
+    public String getAuthorPagePath() {
+        return "/author/" + authorId;
+    }
 }

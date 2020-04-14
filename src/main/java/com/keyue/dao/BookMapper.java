@@ -23,4 +23,6 @@ public interface BookMapper {
     List<Book> searchBooks(@Param("cateId") Integer cateId,@Param("keyword") String keyword);
 
     int queryBooksCountByCateId(Integer cateId);
+
+    Book queryBookByBookNo(@Param("bookNo") String bookNo);
 }

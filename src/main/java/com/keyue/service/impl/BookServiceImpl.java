@@ -3,12 +3,12 @@ package com.keyue.service.impl;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.keyue.dao.AuthorMapper;
 import com.keyue.dao.BookCateMapper;
+import com.keyue.dao.BookChapterMapper;
 import com.keyue.dao.BookMapper;
-import com.keyue.dao.model.Author;
 import com.keyue.dao.model.Book;
 import com.keyue.dao.model.BookCate;
+import com.keyue.dao.model.BookChapter;
 import com.keyue.service.IBookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,6 +27,9 @@ public class BookServiceImpl implements IBookService {
 
     @Autowired
     private BookCateMapper bookCateMapper;
+
+    @Autowired
+    private BookChapterMapper bookChapterMapper;
 
     @Override
     public Map<String, Object> queryBooksByCateId(Integer cateId) {
@@ -82,6 +85,45 @@ public class BookServiceImpl implements IBookService {
         Page page = PageHelper.startPage(pageNum, pageSize, true);
         return bookMapper.searchBooks(categoryId,keyword);
 
+    }
+
+    @Override
+    public Book getRandomBook() {
+        return bookMapper.selectByPrimaryKey(1);   //todo
+    }
+
+    @Override
+    public Map<String, Object> queryInfo4Chapter(String bookNo) {
+        Book book = bookMapper.queryBookByBookNo(bookNo);
+        List<BookChapter> chapterList = bookChapterMapper.queryChapterListByBookNo(bookNo);
+
+        if(book == null){
+            //todo
+        }
+        Map<String, Object> retMap = new HashMap<>();
+        retMap.put("book",book);
+        retMap.put("chapterList",chapterList);
+        return retMap;
+    }
+
+    @Override
+    public Map<String, Object> queryInfo4Reader(String bookNo, Integer chaptherNum) {
+        Book book = bookMapper.queryBookByBookNo(bookNo);
+        List<BookChapter> chapterList = bookChapterMapper.queryChapterListByBookNo(bookNo);
+
+        if(book == null){
+            //todo
+        }
+
+        BookChapter currentChapter = chapterList.get(chaptherNum - 1);
+
+        Map<String, Object> retMap = new HashMap<>();
+        retMap.put("book",book);
+        retMap.put("preChapter",null);      //todo
+        retMap.put("nextChapter",null);     //todo
+        retMap.put("currentChapter",currentChapter);
+        retMap.put("content","content on " + currentChapter.getFileUrl());
+        return retMap;
     }
 
     private void customizeBookCateList(List<BookCate> bookCateList){

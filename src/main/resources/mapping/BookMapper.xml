@@ -210,4 +210,26 @@ AND book.cate_id = book_cate.id
 AND book.`status` = 1
   </select>
 
+  <select id="queryBookByBookNo" resultMap="BaseResultMap" >
+ SELECT
+	book.id as id,
+	book_no,
+	book_name,
+	book_desc,
+	author_id,
+	cate_id,
+	author_name,
+	cate_name
+FROM
+	book,
+	author,
+	book_cate
+WHERE
+ book.author_id = author.id
+AND book.cate_id = book_cate.id
+AND book.`status` = 1
+AND book.book_no=#{bookNo}
+
+  </select>
+
 </mapper>

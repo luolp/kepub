@@ -1,11 +1,17 @@
 package com.keyue.dao;
 
-import com.keyue.dao.model.BookBooklistsKey;
+import com.keyue.dao.model.BookBooklists;
 
 public interface BookBooklistsMapper {
-    int deleteByPrimaryKey(BookBooklistsKey key);
+    int deleteByPrimaryKey(Integer listsId);
 
-    int insert(BookBooklistsKey record);
+    int insert(BookBooklists record);
 
-    int insertSelective(BookBooklistsKey record);
+    int insertSelective(BookBooklists record);
+
+    BookBooklists selectByPrimaryKey(Integer listsId);
+
+    int updateByPrimaryKeySelective(BookBooklists record);
+
+    int updateByPrimaryKey(BookBooklists record);
 }
