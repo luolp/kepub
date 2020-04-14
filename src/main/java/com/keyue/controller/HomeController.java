@@ -67,6 +67,14 @@ public class HomeController {
         return "chapter";
     }
 
+    @RequestMapping(value = "/author/{authorId}",method = RequestMethod.GET)
+    public String chapter(@PathVariable(value = "authorId") Integer authorId, Model model)
+    {
+        Map<String, Object> attrs = bookService.queryBooks4AuthorPage(authorId);
+        model.addAllAttributes(attrs);
+        return "author";
+    }
+
     @RequestMapping(value = "/get_search_result",method = RequestMethod.GET)
     @ResponseBody
     public List<Book> searchJsonInfo(@RequestParam(value = "page", defaultValue = "1") Integer pageNum,
@@ -75,4 +83,6 @@ public class HomeController {
     {
         return bookService.searchJsonInfo(pageNum,keyword,categoryId);
     }
+
+
 }

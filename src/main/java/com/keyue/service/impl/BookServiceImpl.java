@@ -3,20 +3,26 @@ package com.keyue.service.impl;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.keyue.dao.AuthorMapper;
 import com.keyue.dao.BookCateMapper;
 import com.keyue.dao.BookChapterMapper;
 import com.keyue.dao.BookMapper;
+import com.keyue.dao.model.Author;
 import com.keyue.dao.model.Book;
 import com.keyue.dao.model.BookCate;
 import com.keyue.dao.model.BookChapter;
 import com.keyue.service.IBookService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -30,6 +36,12 @@ public class BookServiceImpl implements IBookService {
 
     @Autowired
     private BookChapterMapper bookChapterMapper;
+
+    @Autowired
+    private AuthorMapper authorMapper;
+
+    @Value(value = "${book_file_root_path}")
+    private String bookFileRootPath;
 
     @Override
     public Map<String, Object> queryBooksByCateId(Integer cateId) {
@@ -117,12 +129,50 @@ public class BookServiceImpl implements IBookService {
 
         BookChapter currentChapter = chapterList.get(chaptherNum - 1);
 
+
+        String content = "";
+        try{
+            InputStream is = new FileInputStream(bookFileRootPath + currentChapter.getFileUrl());   //读文件 临时
+            int iAvail = is.available();
+            byte[] bytes = new byte[iAvail];
+            is.read(bytes);
+            content = new String(bytes);
+            is.close();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
         Map<String, Object> retMap = new HashMap<>();
         retMap.put("book",book);
         retMap.put("preChapter",null);      //todo
         retMap.put("nextChapter",null);     //todo
         retMap.put("currentChapter",currentChapter);
-        retMap.put("content","content on " + currentChapter.getFileUrl());
+        retMap.put("content",content);
+        return retMap;
+    }
+
+    @Override
+    public Map<String, Object> queryBooks4AuthorPage(Integer authorId) {
+        Author author = authorMapper.selectByPrimaryKey(authorId);
+        List<Book> books = bookMapper.queryBooksByAuthorId(authorId);
+        Map<String,List<Book> > booksMap = books.stream().collect(Collectors.groupingBy(book ->{
+            Integer cateId = book.getCateId();
+            switch (cateId){
+                case 1: case 3: case 5:
+                    return "中长篇";
+                case 2:
+                    return "散文随笔";
+                case 4:
+                    return "短篇";
+                case 6:
+                default:
+                    return "其他";
+            }
+        }));
+
+        Map<String, Object> retMap = new HashMap<>();
+        retMap.put("author",author);
+        retMap.put("booksMap",booksMap);
         return retMap;
     }
 

@@ -13,6 +13,7 @@ public interface IBookService {
     Book getRandomBook();
     Map<String,Object> queryInfo4Chapter(String bookNo);
     Map<String,Object> queryInfo4Reader(String bookNo, Integer chaptherNum);
+    Map<String,Object> queryBooks4AuthorPage(Integer authorId);
 
 
 
