@@ -1,5 +1,6 @@
 package com.keyue.bookcontent;
 
+import com.keyue.dao.model.MarkedSymbol;
 import com.keyue.utils.FileHelper;
 
 import java.util.ArrayList;
@@ -11,7 +12,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class BookContentManager {
-    public static String getContent(String filePath){
+    public static String getContent(String filePath, Map<Integer, List<MarkedSymbol>> markedSymbolListMap){
         List<String> contentList = FileHelper.readLinesAndClose(filePath);
 
         //给每个段落加上id 这一步可以预先处理好
@@ -29,15 +30,14 @@ public class BookContentManager {
         }
 
 
-        Map<Integer, List<Integer>> markedCharsMap = new HashMap<>();
 
         //data for test
-        List<Integer> markedCharsP1 = new ArrayList<>();
-        markedCharsP1.add(20);
-        markedCharsP1.add(21);
-        markedCharsP1.add(22);
-        markedCharsP1.add(70);
-        markedCharsMap.put(1,markedCharsP1);
+//        List<Integer> markedCharsP1 = new ArrayList<>();
+//        markedCharsP1.add(20);
+//        markedCharsP1.add(21);
+//        markedCharsP1.add(22);
+//        markedCharsP1.add(70);
+//        markedCharsMap.put(1,markedCharsP1);
 
 
         String pattern = "<p id=\"([0-9]*)\">(.*)</p>";    //todo 待改进
@@ -53,18 +53,18 @@ public class BookContentManager {
             String paragraphId = m.group(1);
             String rawContent = m.group(2);
 
-            List<Integer> markedChars = markedCharsMap.get(Integer.parseInt(paragraphId));
-            if(null == markedChars || markedChars.isEmpty()){
+            List<MarkedSymbol> markedSymbolList = markedSymbolListMap.get(Integer.parseInt(paragraphId));
+            if(null == markedSymbolList || markedSymbolList.isEmpty()){
                 return paragraph;
             }
             //markedChars 正序
-            int cslen = markedChars.size();
+            int cslen = markedSymbolList.size();
             int cspos = cslen - 1;
 
             StringBuilder sb = new StringBuilder(rawContent);
             //从后往前计算，避免插入标签后重新计算当前处理位置
             for (int i = sb.length() - 1; i >= 0 && cspos >=0; i--) {
-                if (i == markedChars.get(cspos)){
+                if (i == markedSymbolList.get(cspos).getSymbolPos()){
                     cspos --;
                     sb.insert(i,"</a>");
                     sb.insert(i-1,"<a>");
