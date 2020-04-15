@@ -3,6 +3,7 @@ package com.keyue.service.impl;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.keyue.bookcontent.BookContentManager;
 import com.keyue.dao.AuthorMapper;
 import com.keyue.dao.BookCateMapper;
 import com.keyue.dao.BookChapterMapper;
@@ -126,28 +127,14 @@ public class BookServiceImpl implements IBookService {
         if(book == null){
             //todo
         }
-
         BookChapter currentChapter = chapterList.get(chaptherNum - 1);
-
-
-        String content = "";
-        try{
-            InputStream is = new FileInputStream(bookFileRootPath + currentChapter.getFileUrl());   //读文件 临时
-            int iAvail = is.available();
-            byte[] bytes = new byte[iAvail];
-            is.read(bytes);
-            content = new String(bytes);
-            is.close();
-        }catch(Exception e){
-            e.printStackTrace();
-        }
 
         Map<String, Object> retMap = new HashMap<>();
         retMap.put("book",book);
         retMap.put("preChapter",null);      //todo
         retMap.put("nextChapter",null);     //todo
         retMap.put("currentChapter",currentChapter);
-        retMap.put("content",content);
+        retMap.put("content", BookContentManager.getContent(bookFileRootPath + currentChapter.getFileUrl()));
         return retMap;
     }
 

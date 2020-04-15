@@ -76,9 +76,7 @@ ul.booklist{
 			
 			<div style="margin-top:0.5em">
 
-				<div style='line-height:1.5em;text-align:justify;text-justify:distribute;' th:inline = "text">
-					[[${content}]]
-					<!--todo 去掉引号-->
+				<div style='line-height:1.5em;text-align:justify;text-justify:distribute;' th:utext="${content}">
 				</div>
 			</div>
         </div>
