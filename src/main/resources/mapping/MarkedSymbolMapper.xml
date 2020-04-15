@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.keyue.dao.MarkedSymbolMapper" >
+  <resultMap id="BaseResultMap" type="com.keyue.dao.model.MarkedSymbol" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="book_no" property="bookNo" jdbcType="VARCHAR" />
+    <result column="chapter_num" property="chapterNum" jdbcType="INTEGER" />
+    <result column="paragraph_num" property="paragraphNum" jdbcType="INTEGER" />
+    <result column="symbol_pos" property="symbolPos" jdbcType="INTEGER" />
+    <result column="symbol" property="symbol" jdbcType="VARCHAR" />
+    <result column="belong_markers" property="belongMarkers" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, book_no, chapter_num, paragraph_num, symbol_pos, symbol, belong_markers, type
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from marked_symbol
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from marked_symbol
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.keyue.dao.model.MarkedSymbol" >
+    insert into marked_symbol (id, book_no, chapter_num, 
+      paragraph_num, symbol_pos, symbol, 
+      belong_markers, type)
+    values (#{id,jdbcType=INTEGER}, #{bookNo,jdbcType=VARCHAR}, #{chapterNum,jdbcType=INTEGER}, 
+      #{paragraphNum,jdbcType=INTEGER}, #{symbolPos,jdbcType=INTEGER}, #{symbol,jdbcType=VARCHAR}, 
+      #{belongMarkers,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.keyue.dao.model.MarkedSymbol" >
+    insert into marked_symbol
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="bookNo != null" >
+        book_no,
+      </if>
+      <if test="chapterNum != null" >
+        chapter_num,
+      </if>
+      <if test="paragraphNum != null" >
+        paragraph_num,
+      </if>
+      <if test="symbolPos != null" >
+        symbol_pos,
+      </if>
+      <if test="symbol != null" >
+        symbol,
+      </if>
+      <if test="belongMarkers != null" >
+        belong_markers,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="bookNo != null" >
+        #{bookNo,jdbcType=VARCHAR},
+      </if>
+      <if test="chapterNum != null" >
+        #{chapterNum,jdbcType=INTEGER},
+      </if>
+      <if test="paragraphNum != null" >
+        #{paragraphNum,jdbcType=INTEGER},
+      </if>
+      <if test="symbolPos != null" >
+        #{symbolPos,jdbcType=INTEGER},
+      </if>
+      <if test="symbol != null" >
+        #{symbol,jdbcType=VARCHAR},
+      </if>
+      <if test="belongMarkers != null" >
+        #{belongMarkers,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.keyue.dao.model.MarkedSymbol" >
+    update marked_symbol
+    <set >
+      <if test="bookNo != null" >
+        book_no = #{bookNo,jdbcType=VARCHAR},
+      </if>
+      <if test="chapterNum != null" >
+        chapter_num = #{chapterNum,jdbcType=INTEGER},
+      </if>
+      <if test="paragraphNum != null" >
+        paragraph_num = #{paragraphNum,jdbcType=INTEGER},
+      </if>
+      <if test="symbolPos != null" >
+        symbol_pos = #{symbolPos,jdbcType=INTEGER},
+      </if>
+      <if test="symbol != null" >
+        symbol = #{symbol,jdbcType=VARCHAR},
+      </if>
+      <if test="belongMarkers != null" >
+        belong_markers = #{belongMarkers,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.keyue.dao.model.MarkedSymbol" >
+    update marked_symbol
+    set book_no = #{bookNo,jdbcType=VARCHAR},
+      chapter_num = #{chapterNum,jdbcType=INTEGER},
+      paragraph_num = #{paragraphNum,jdbcType=INTEGER},
+      symbol_pos = #{symbolPos,jdbcType=INTEGER},
+      symbol = #{symbol,jdbcType=VARCHAR},
+      belong_markers = #{belongMarkers,jdbcType=VARCHAR},
+      type = #{type,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <select id="queryMarkedSymbol" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from marked_symbol
+    where
+    book_no = #{bookNo,jdbcType=VARCHAR}
+    and
+    chapter_num = #{chapterNum,jdbcType=INTEGER}
+    order by paragraph_num,symbol_pos
+  </select>
+
+</mapper>

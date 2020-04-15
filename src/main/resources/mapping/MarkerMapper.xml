@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.keyue.dao.MarkerMapper" >
+  <resultMap id="BaseResultMap" type="com.keyue.dao.model.Marker" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="marker_id" property="markerId" jdbcType="VARCHAR" />
+    <result column="creator_id" property="creatorId" jdbcType="VARCHAR" />
+    <result column="marker_type" property="markerType" jdbcType="INTEGER" />
+    <result column="book_no" property="bookNo" jdbcType="VARCHAR" />
+    <result column="chapter_num" property="chapterNum" jdbcType="INTEGER" />
+    <result column="paragraph_num" property="paragraphNum" jdbcType="INTEGER" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.keyue.dao.model.Marker" extends="BaseResultMap" >
+    <result column="comment" property="comment" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, marker_id, creator_id, marker_type, book_no, chapter_num, paragraph_num
+  </sql>
+  <sql id="Blob_Column_List" >
+    comment
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from marker
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from marker
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.keyue.dao.model.Marker" >
+    insert into marker (id, marker_id, creator_id, 
+      marker_type, book_no, chapter_num, 
+      paragraph_num, comment)
+    values (#{id,jdbcType=INTEGER}, #{markerId,jdbcType=VARCHAR}, #{creatorId,jdbcType=VARCHAR}, 
+      #{markerType,jdbcType=INTEGER}, #{bookNo,jdbcType=VARCHAR}, #{chapterNum,jdbcType=INTEGER}, 
+      #{paragraphNum,jdbcType=INTEGER}, #{comment,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.keyue.dao.model.Marker" >
+    insert into marker
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="markerId != null" >
+        marker_id,
+      </if>
+      <if test="creatorId != null" >
+        creator_id,
+      </if>
+      <if test="markerType != null" >
+        marker_type,
+      </if>
+      <if test="bookNo != null" >
+        book_no,
+      </if>
+      <if test="chapterNum != null" >
+        chapter_num,
+      </if>
+      <if test="paragraphNum != null" >
+        paragraph_num,
+      </if>
+      <if test="comment != null" >
+        comment,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="markerId != null" >
+        #{markerId,jdbcType=VARCHAR},
+      </if>
+      <if test="creatorId != null" >
+        #{creatorId,jdbcType=VARCHAR},
+      </if>
+      <if test="markerType != null" >
+        #{markerType,jdbcType=INTEGER},
+      </if>
+      <if test="bookNo != null" >
+        #{bookNo,jdbcType=VARCHAR},
+      </if>
+      <if test="chapterNum != null" >
+        #{chapterNum,jdbcType=INTEGER},
+      </if>
+      <if test="paragraphNum != null" >
+        #{paragraphNum,jdbcType=INTEGER},
+      </if>
+      <if test="comment != null" >
+        #{comment,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.keyue.dao.model.Marker" >
+    update marker
+    <set >
+      <if test="markerId != null" >
+        marker_id = #{markerId,jdbcType=VARCHAR},
+      </if>
+      <if test="creatorId != null" >
+        creator_id = #{creatorId,jdbcType=VARCHAR},
+      </if>
+      <if test="markerType != null" >
+        marker_type = #{markerType,jdbcType=INTEGER},
+      </if>
+      <if test="bookNo != null" >
+        book_no = #{bookNo,jdbcType=VARCHAR},
+      </if>
+      <if test="chapterNum != null" >
+        chapter_num = #{chapterNum,jdbcType=INTEGER},
+      </if>
+      <if test="paragraphNum != null" >
+        paragraph_num = #{paragraphNum,jdbcType=INTEGER},
+      </if>
+      <if test="comment != null" >
+        comment = #{comment,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.keyue.dao.model.Marker" >
+    update marker
+    set marker_id = #{markerId,jdbcType=VARCHAR},
+      creator_id = #{creatorId,jdbcType=VARCHAR},
+      marker_type = #{markerType,jdbcType=INTEGER},
+      book_no = #{bookNo,jdbcType=VARCHAR},
+      chapter_num = #{chapterNum,jdbcType=INTEGER},
+      paragraph_num = #{paragraphNum,jdbcType=INTEGER},
+      comment = #{comment,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.keyue.dao.model.Marker" >
+    update marker
+    set marker_id = #{markerId,jdbcType=VARCHAR},
+      creator_id = #{creatorId,jdbcType=VARCHAR},
+      marker_type = #{markerType,jdbcType=INTEGER},
+      book_no = #{bookNo,jdbcType=VARCHAR},
+      chapter_num = #{chapterNum,jdbcType=INTEGER},
+      paragraph_num = #{paragraphNum,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>
