@@ -1,0 +1,31 @@
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>可阅_注册</title>
+    <link href="css/page/login.css" rel="stylesheet">
+    <script src="/static/libs/jquery-3.2.1.min.js"></script>
+</head>
+<body>
+    <div class="content">
+        <h1 class="welcome center" onclick="location.href='http://m.liulangcat.com'">可阅</h1>
+        <form action="register.php" method="post" id="reg_form">
+            <div class="input" id="getInput" >
+                <input name="email" type="text" placeholder="邮箱" autocapitalize="off" autocorrect="off" >
+            </div>
+            <div class="password-input input" >
+                <input type="password" name="password" placeholder="密码 (最少6位)" autocapitalize="off" autocorrect="off" >
+                <span class="opt eye-close" ></span>
+            </div>
+            <div class="input" id="getNickName" >
+                <input name="username" type="text" placeholder="用户名" maxlength="16" autocapitalize="off" autocorrect="off" >
+            </div>
+            <div class="opt-area" >
+                <button type="button" class="btn" id="submit_btn" onclick="check_input()" >注册</button>
+            </div>
+        </form>
+    </div>
+</body>
+<script type="text/ecmascript" src="./api/sha1.js"></script>
+<script src="js/register.js"></script>
+</html>

@@ -1,44 +1,89 @@
 package com.keyue.entity;
 
-public class ResultModel<T> {
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.keyue.common.enums.ResultCode;
 
-    private Integer code;
+import java.io.Serializable;
 
-    private String msg;
+public class ResultModel<T> implements Serializable {
 
-    private T data;
+	private Integer code;
 
-    public ResultModel(){
-        this.code = 0;
-        this.msg = "成功";
-    }
+	private String msg;
 
-    public ResultModel(Integer code, String msg) {
-        this.code = code;
-        this.msg = msg;
-    }
+	@JsonInclude(Include.NON_NULL)
+	private T data;
 
-    public Integer getCode() {
-        return code;
-    }
+	public ResultModel() {
+		this.code = ResultCode.SUCCESS.getCode();
+		this.msg = ResultCode.SUCCESS.getMsg();
+	}
 
-    public void setCode(Integer code) {
-        this.code = code;
-    }
+	public ResultModel(String msg) {
+		this.code = ResultCode.FAILED.getCode();
+		this.msg = msg;
+	}
 
-    public String getMsg() {
-        return msg;
-    }
+	public ResultModel(int code, String msg) {
+		this.code = code;
+		this.msg=msg;
+	}
 
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
+	/**
+	 * 失败返回结果
+	 * @param msg 提示信息
+	 */
+	public static <T> ResultModel<T> failed(String msg) {
+		return new ResultModel<T>(ResultCode.FAILED.getCode(), msg);
+	}
 
-    public T getData() {
-        return data;
-    }
+	/**
+	 * 失败返回结果
+	 * @param msg 提示信息
+	 */
+	public static <T> ResultModel<T> failed(Integer code, String msg) {
+		return new ResultModel<T>(code, msg);
+	}
 
-    public void setData(T data) {
-        this.data = data;
-    }
+	/**
+	 * 成功返回结果
+	 * @param msg 提示信息
+	 */
+	public static <T> ResultModel<T> success(String msg) {
+		return new ResultModel<T>(ResultCode.SUCCESS.getCode(), msg);
+	}
+
+	public Integer getCode() {
+		return code;
+	}
+
+	public void setCode(Integer code) {
+		this.code = code;
+	}
+
+	public String getMsg() {
+		return msg;
+	}
+
+	public void setMsg(String msg) {
+		this.msg = msg;
+	}
+
+	public T getData() {
+		return data;
+	}
+
+	public void setData(T data) {
+		this.data = data;
+	}
+
+	@Override
+	public String toString() {
+		return "ResultModel{" +
+				"code=" + code +
+				", msg='" + msg + '\'' +
+				", data=" + data +
+				'}';
+	}
 }

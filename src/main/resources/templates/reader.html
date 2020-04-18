@@ -6,8 +6,7 @@
     <meta charset="UTF-8">
 	
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script src="libs/jquery-3.2.1.min.js"></script>
-    <script src="js/selectionListener.js"></script>
+	<script src="libs/jquery-3.2.1.min.js"></script>
 	<title>[[${book.bookName}]] [[${currentChapter.chapterName}]]</title>
 
 </head>
@@ -139,29 +138,5 @@ ul.booklist{
 			})
 		}
 	});
-</script>
-
-<script th:inline="javascript">
-    $("p").mouseup(function(){
-        var selObj = window.getSelection();
-
-        if(selObj == null || selObj.toString() == ""){
-            return;
-        }
-        var pid = selObj.anchorNode.parentNode.getAttribute("id");
-        var postData = {
-            "bookNo":/*[[${book.bookNo}]]*/0,
-            "chapterNum":/*[[${currentChapter.chapterNo}]]*/1,
-            "paragraphNum": parseInt(pid),
-            "comment":"comment",
-            "anchorPos":selObj.anchorOffset,
-            "focusPos":selObj.focusOffset,
-            "selectionText":selObj.toString()
-        }
-
-        $.post("/marker/commitMarker",postData);
-
-        alert('mouseup function is running !');
-    });
 </script>
 </html>
