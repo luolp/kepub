@@ -22,6 +22,8 @@ public class MarkedSymbol {
 
     private Integer type;
 
+    private String symbolId;
+
     public Integer getId() {
         return id;
     }
@@ -86,6 +88,14 @@ public class MarkedSymbol {
         this.type = type;
     }
 
+    public String getSymbolId() {
+        return symbolId;
+    }
+
+    public void setSymbolId(String symbolId) {
+        this.symbolId = symbolId;
+    }
+
     public static List<MarkedSymbol> fromParams(RequestParams4MarkerCommit params, Marker marker){
         List<MarkedSymbol> lists = new ArrayList<>();
         int begin = Math.min(params.getAnchorPos(),params.getFocusPos());
@@ -102,6 +112,32 @@ public class MarkedSymbol {
 
             lists.add(markedSymbol);
         }
+        return lists;
+    }
+
+    public static List<MarkedSymbol> fromParamsV2(RequestParams4MarkerCommit params, Marker marker){
+        List<MarkedSymbol> lists = new ArrayList<>();
+        int begin = Math.min(params.getAnchorPos(),params.getFocusPos());
+        int end = Math.max(params.getAnchorPos(),params.getFocusPos());
+        for (int i = begin,j=0; i<end; i++,j++){
+            MarkedSymbol markedSymbol = new MarkedSymbol();
+            markedSymbol.setBookNo(params.getBookNo());
+            markedSymbol.setChapterNum(params.getChapterNum());
+            markedSymbol.setSymbolPos(i);
+            markedSymbol.setSymbol(String.valueOf(params.getSelectionText().charAt(j)));
+            markedSymbol.setType(0);
+            markedSymbol.setSymbolId(String.format("%s-%03d-%05d-%02d",markedSymbol.getBookNo(),markedSymbol.getChapterNum(),markedSymbol.getSymbolPos(),markedSymbol.getType()));
+            lists.add(markedSymbol);
+        }
+
+        MarkedSymbol markedSymbol = new MarkedSymbol();
+        markedSymbol.setBookNo(params.getBookNo());
+        markedSymbol.setChapterNum(params.getChapterNum());
+        markedSymbol.setSymbolPos(end);
+        markedSymbol.setType(1);
+        markedSymbol.setSymbolId(String.format("%s-%03d-%05d-%02d",markedSymbol.getBookNo(),markedSymbol.getChapterNum(),markedSymbol.getSymbolPos(),markedSymbol.getType()));
+        lists.add(markedSymbol);
+
         return lists;
     }
 }

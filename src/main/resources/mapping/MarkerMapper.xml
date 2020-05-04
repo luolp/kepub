@@ -9,12 +9,16 @@
     <result column="book_no" property="bookNo" jdbcType="VARCHAR" />
     <result column="chapter_num" property="chapterNum" jdbcType="INTEGER" />
     <result column="paragraph_num" property="paragraphNum" jdbcType="INTEGER" />
+    <result column="pos_start" property="posStart" jdbcType="INTEGER" />
+    <result column="pos_end" property="posEnd" jdbcType="INTEGER" />
+    <result column="target_sentence" property="targetSentence" jdbcType="VARCHAR" />
   </resultMap>
   <resultMap id="ResultMapWithBLOBs" type="com.keyue.dao.model.Marker" extends="BaseResultMap" >
     <result column="comment" property="comment" jdbcType="LONGVARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, marker_id, creator_id, marker_type, book_no, chapter_num, paragraph_num
+    id, marker_id, creator_id, marker_type, book_no, chapter_num, paragraph_num, pos_start, 
+    pos_end, target_sentence
   </sql>
   <sql id="Blob_Column_List" >
     comment
@@ -34,10 +38,12 @@
   <insert id="insert" parameterType="com.keyue.dao.model.Marker" >
     insert into marker (id, marker_id, creator_id, 
       marker_type, book_no, chapter_num, 
-      paragraph_num, comment)
+      paragraph_num, pos_start, pos_end, 
+      target_sentence, comment)
     values (#{id,jdbcType=INTEGER}, #{markerId,jdbcType=VARCHAR}, #{creatorId,jdbcType=VARCHAR}, 
       #{markerType,jdbcType=INTEGER}, #{bookNo,jdbcType=VARCHAR}, #{chapterNum,jdbcType=INTEGER}, 
-      #{paragraphNum,jdbcType=INTEGER}, #{comment,jdbcType=LONGVARCHAR})
+      #{paragraphNum,jdbcType=INTEGER}, #{posStart,jdbcType=INTEGER}, #{posEnd,jdbcType=INTEGER}, 
+      #{targetSentence,jdbcType=VARCHAR}, #{comment,jdbcType=LONGVARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.keyue.dao.model.Marker" >
     insert into marker
@@ -62,6 +68,15 @@
       </if>
       <if test="paragraphNum != null" >
         paragraph_num,
+      </if>
+      <if test="posStart != null" >
+        pos_start,
+      </if>
+      <if test="posEnd != null" >
+        pos_end,
+      </if>
+      <if test="targetSentence != null" >
+        target_sentence,
       </if>
       <if test="comment != null" >
         comment,
@@ -89,6 +104,15 @@
       <if test="paragraphNum != null" >
         #{paragraphNum,jdbcType=INTEGER},
       </if>
+      <if test="posStart != null" >
+        #{posStart,jdbcType=INTEGER},
+      </if>
+      <if test="posEnd != null" >
+        #{posEnd,jdbcType=INTEGER},
+      </if>
+      <if test="targetSentence != null" >
+        #{targetSentence,jdbcType=VARCHAR},
+      </if>
       <if test="comment != null" >
         #{comment,jdbcType=LONGVARCHAR},
       </if>
@@ -115,6 +139,15 @@
       <if test="paragraphNum != null" >
         paragraph_num = #{paragraphNum,jdbcType=INTEGER},
       </if>
+      <if test="posStart != null" >
+        pos_start = #{posStart,jdbcType=INTEGER},
+      </if>
+      <if test="posEnd != null" >
+        pos_end = #{posEnd,jdbcType=INTEGER},
+      </if>
+      <if test="targetSentence != null" >
+        target_sentence = #{targetSentence,jdbcType=VARCHAR},
+      </if>
       <if test="comment != null" >
         comment = #{comment,jdbcType=LONGVARCHAR},
       </if>
@@ -129,6 +162,9 @@
       book_no = #{bookNo,jdbcType=VARCHAR},
       chapter_num = #{chapterNum,jdbcType=INTEGER},
       paragraph_num = #{paragraphNum,jdbcType=INTEGER},
+      pos_start = #{posStart,jdbcType=INTEGER},
+      pos_end = #{posEnd,jdbcType=INTEGER},
+      target_sentence = #{targetSentence,jdbcType=VARCHAR},
       comment = #{comment,jdbcType=LONGVARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -139,7 +175,10 @@
       marker_type = #{markerType,jdbcType=INTEGER},
       book_no = #{bookNo,jdbcType=VARCHAR},
       chapter_num = #{chapterNum,jdbcType=INTEGER},
-      paragraph_num = #{paragraphNum,jdbcType=INTEGER}
+      paragraph_num = #{paragraphNum,jdbcType=INTEGER},
+      pos_start = #{posStart,jdbcType=INTEGER},
+      pos_end = #{posEnd,jdbcType=INTEGER},
+      target_sentence = #{targetSentence,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

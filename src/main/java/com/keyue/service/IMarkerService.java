@@ -5,4 +5,5 @@ import com.keyue.entity.ResultModel;
 
 public interface IMarkerService {
     ResultModel<String> commitMarker(RequestParams4MarkerCommit params);
+    ResultModel<String> commitMarkerV2(RequestParams4MarkerCommit params);
 }

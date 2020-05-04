@@ -17,7 +17,17 @@ public class MarkerController {
 
     @RequestMapping(value = "/commitMarker",method = RequestMethod.POST)
     public ResultModel<String> commitMarker(RequestParams4MarkerCommit params){
-        return markerService.commitMarker(params);
+//        return markerService.commitMarker(params);
+        return null;
     }
 
+    @RequestMapping(value = "/commitMarkerV2",method = RequestMethod.POST)
+    public ResultModel<String> commitMarkerV2(RequestParams4MarkerCommit params){
+        try {
+            return markerService.commitMarkerV2(params);
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+    }
 }

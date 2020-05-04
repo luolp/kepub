@@ -4,21 +4,13 @@ package com.keyue.service.impl;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.keyue.bookcontent.BookContentManager;
-import com.keyue.dao.AuthorMapper;
-import com.keyue.dao.BookCateMapper;
-import com.keyue.dao.BookChapterMapper;
-import com.keyue.dao.BookMapper;
-import com.keyue.dao.model.Author;
-import com.keyue.dao.model.Book;
-import com.keyue.dao.model.BookCate;
-import com.keyue.dao.model.BookChapter;
+import com.keyue.dao.*;
+import com.keyue.dao.model.*;
 import com.keyue.service.IBookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -40,6 +32,9 @@ public class BookServiceImpl implements IBookService {
 
     @Autowired
     private AuthorMapper authorMapper;
+
+    @Autowired
+    private MarkedSymbolMapper markedSymbolMapper;
 
     @Value(value = "${book_file_root_path}")
     private String bookFileRootPath;
@@ -129,12 +124,20 @@ public class BookServiceImpl implements IBookService {
         }
         BookChapter currentChapter = chapterList.get(chaptherNum - 1);
 
+        List<MarkedSymbol> markedSymbolList = markedSymbolMapper.queryMarkedSymbol(bookNo,chaptherNum);
+//        Map<Integer, List<MarkedSymbol>> markedSymbolListMap = markedSymbolList.stream().collect(Collectors.groupingBy(MarkedSymbol::getChapterNum));
+
+
         Map<String, Object> retMap = new HashMap<>();
         retMap.put("book",book);
         retMap.put("preChapter",null);      //todo
         retMap.put("nextChapter",null);     //todo
         retMap.put("currentChapter",currentChapter);
-        retMap.put("content", BookContentManager.getContent(bookFileRootPath + currentChapter.getFileUrl()));
+        try {
+            retMap.put("content", BookContentManager.getContentV2(bookFileRootPath + currentChapter.getFileUrl(),markedSymbolList));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         return retMap;
     }
 
