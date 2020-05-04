@@ -14,10 +14,6 @@ public interface MarkedSymbolMapper {
 
     MarkedSymbol selectByPrimaryKey(Integer id);
 
-    int updateByPrimaryKeySelective(MarkedSymbol record);
-
-    int updateByPrimaryKey(MarkedSymbol record);
-
     List<MarkedSymbol> queryMarkedSymbol(@Param("bookNo") String bookNo, @Param("chapterNum") Integer chapterNum);
 
 }

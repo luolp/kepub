@@ -1,5 +1,6 @@
 package com.keyue.bookcontent;
 
+import com.keyue.dao.model.MarkedSymbol;
 import com.keyue.utils.FileHelper;
 
 import java.util.ArrayList;
@@ -11,7 +12,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class BookContentManager {
-    public static String getContent(String filePath){
+    public static String getContent(String filePath, Map<Integer, List<MarkedSymbol>> markedSymbolListMap){
         List<String> contentList = FileHelper.readLinesAndClose(filePath);
 
         //给每个段落加上id 这一步可以预先处理好
@@ -29,15 +30,14 @@ public class BookContentManager {
         }
 
 
-        Map<Integer, List<Integer>> markedCharsMap = new HashMap<>();
 
         //data for test
-        List<Integer> markedCharsP1 = new ArrayList<>();
-        markedCharsP1.add(20);
-        markedCharsP1.add(21);
-        markedCharsP1.add(22);
-        markedCharsP1.add(70);
-        markedCharsMap.put(1,markedCharsP1);
+//        List<Integer> markedCharsP1 = new ArrayList<>();
+//        markedCharsP1.add(20);
+//        markedCharsP1.add(21);
+//        markedCharsP1.add(22);
+//        markedCharsP1.add(70);
+//        markedCharsMap.put(1,markedCharsP1);
 
 
         String pattern = "<p id=\"([0-9]*)\">(.*)</p>";    //todo 待改进
@@ -53,18 +53,18 @@ public class BookContentManager {
             String paragraphId = m.group(1);
             String rawContent = m.group(2);
 
-            List<Integer> markedChars = markedCharsMap.get(Integer.parseInt(paragraphId));
-            if(null == markedChars || markedChars.isEmpty()){
+            List<MarkedSymbol> markedSymbolList = markedSymbolListMap.get(Integer.parseInt(paragraphId));
+            if(null == markedSymbolList || markedSymbolList.isEmpty()){
                 return paragraph;
             }
             //markedChars 正序
-            int cslen = markedChars.size();
+            int cslen = markedSymbolList.size();
             int cspos = cslen - 1;
 
             StringBuilder sb = new StringBuilder(rawContent);
             //从后往前计算，避免插入标签后重新计算当前处理位置
             for (int i = sb.length() - 1; i >= 0 && cspos >=0; i--) {
-                if (i == markedChars.get(cspos)){
+                if (i == markedSymbolList.get(cspos).getSymbolPos()){
                     cspos --;
                     sb.insert(i,"</a>");
                     sb.insert(i-1,"<a>");
@@ -77,5 +77,64 @@ public class BookContentManager {
         String result = contentList.stream().collect(Collectors.joining(System.lineSeparator()));
 
         return result;
+    }
+
+    public static String getContentV2(String filePath, List<MarkedSymbol> markedSymbolList){
+        String content = FileHelper.readAll(filePath);
+
+        int cslen = markedSymbolList.size();
+        int cspos = cslen - 1;
+        content = content.replace("\r\n","\n");
+        StringBuilder sb = new StringBuilder(content);
+
+        //计算换行符位置
+        List<Integer> posList = new ArrayList<>();
+        int npos = -1;
+        while ((npos = sb.indexOf("\n",npos + 1)) != -1){
+            posList.add(npos);
+        }
+
+        //插入标记
+        //从后往前计算，避免插入标签后重新计算当前处理位置
+        for (int i = sb.length() - 1; i >= 0 && cspos >=0; i--) {
+            //插入到结尾处
+            if(markedSymbolList.get(cspos).getSymbolPos() >= sb.length()){
+                sb.append("<a>...</a>");
+                cspos --;
+            }
+            if (i == markedSymbolList.get(cspos).getSymbolPos()){
+                if(markedSymbolList.get(cspos).getType() == 0){
+                    sb.insert(i+1,"</a>");
+                    sb.insert(i,"<a>");
+                } else{
+                    sb.insert(i,"<a>...</a>");
+                }
+                cspos --;
+            }
+        }
+
+        //从新计算换行符位置
+        List<Integer> newPosList = new ArrayList<>();
+        npos = -1;
+        while ((npos = sb.indexOf("\n",npos + 1)) != -1){
+            newPosList.add(npos);
+        }
+
+        assert (posList.size() == newPosList.size());
+        //加入html p标签
+        String insertStr = "<p>";
+        int revisePos = 0;
+        sb.insert(0,insertStr);
+        revisePos += insertStr.length();
+        for (int i = 0; i < posList.size(); i++) {
+            insertStr = "</p>\n<p>";
+            sb.replace(newPosList.get(i) + revisePos,newPosList.get(i) + 1 + revisePos,insertStr);
+            revisePos += (insertStr.length() - 1); //1=="\n".length
+        }
+        insertStr = "</p>";
+        sb.append(insertStr);
+        revisePos += insertStr.length();
+
+        return sb.toString();
     }
 }

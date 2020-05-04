@@ -18,6 +18,12 @@ public class Marker {
 
     private Integer paragraphNum;
 
+    private Integer posStart;
+
+    private Integer posEnd;
+
+    private String targetSentence;
+
     private String comment;
 
     public Integer getId() {
@@ -76,6 +82,30 @@ public class Marker {
         this.paragraphNum = paragraphNum;
     }
 
+    public Integer getPosStart() {
+        return posStart;
+    }
+
+    public void setPosStart(Integer posStart) {
+        this.posStart = posStart;
+    }
+
+    public Integer getPosEnd() {
+        return posEnd;
+    }
+
+    public void setPosEnd(Integer posEnd) {
+        this.posEnd = posEnd;
+    }
+
+    public String getTargetSentence() {
+        return targetSentence;
+    }
+
+    public void setTargetSentence(String targetSentence) {
+        this.targetSentence = targetSentence == null ? null : targetSentence.trim();
+    }
+
     public String getComment() {
         return comment;
     }
@@ -92,6 +122,21 @@ public class Marker {
         marker.setParagraphNum(params.getParagraphNum());
         marker.setComment(params.getComment());
         marker.setMarkerType(params.getMarkerType());
+        return marker;
+    }
+
+    public static Marker fromParamsV2(RequestParams4MarkerCommit params){
+        Marker marker = new Marker();
+        marker.setMarkerId(GUIDUtils.generateGUID());
+        marker.setBookNo(params.getBookNo());
+        marker.setChapterNum(params.getChapterNum());
+        marker.setComment(params.getComment());
+        marker.setMarkerType(params.getMarkerType());
+
+        int begin = Math.min(params.getAnchorPos(),params.getFocusPos());
+        int end = Math.max(params.getAnchorPos(),params.getFocusPos());
+        marker.setPosStart(begin);
+        marker.setPosEnd(end);
         return marker;
     }
 }
