@@ -1,0 +1,61 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>可阅_忘记密码</title>
+    <!-- 引入 WeUI -->
+    <link rel="stylesheet" href="https://res.wx.qq.com/open/libs/weui/2.3.0/weui.css"/>
+    <link href="css/page/forget.css" rel="stylesheet">
+</head>
+<body>
+<h1 class="title"><a href="javascript:history.go(-1);">取消</a>忘记密码</h1>
+<div class="content">
+    <form method="post" id="forget_form">
+        <div class="input" id="usernameInput" >
+            <input name="username" type="text" placeholder="请输入邮箱或可阅号" autocapitalize="off" autocorrect="off" >
+        </div>
+        <div class="input" id="codeInput" hidden>
+            <input name="code" type="text" autocapitalize="off" autocorrect="off" >
+        </div>
+        <div class="password-input input" id="pwdInput" hidden>
+            <input type="password" name="password" placeholder="密码 (6~18位字母、数字、特殊符号)" autocapitalize="off" autocorrect="off" >
+            <span class="opt eye-close" ></span>
+        </div>
+        <div class="opt-area" >
+            <button type="button" class="btn" id="submit_btn" onclick="next_step()" >下一步</button>
+        </div>
+    </form>
+</div>
+<div id="toast" style="display:none;">
+    <div class="weui-mask_transparent"></div>
+    <div class="weui-toast">
+        <i class="weui-icon-cancel weui-icon_toast" style="color: rgba(255,255,255,0.9);width: 55px;height: 55px;"></i>
+        <p class="weui-toast__content" ></p>
+    </div>
+</div>
+<div id="successMsg" class="weui-msg" style="display:none;">
+    <div class="weui-msg__icon-area"><i class="weui-icon-success weui-icon_msg"></i></div>
+    <div class="weui-msg__text-area">
+        <h2 class="weui-msg__title">修改成功</h2>
+        <p class="weui-msg__desc">密码修改成功</p>
+    </div>
+    <div class="weui-msg__opr-area">
+        <p class="weui-btn-area">
+            <a href="javascript:location.href='/login.html';" class="weui-btn weui-btn_primary">去登录</a>
+        </p>
+    </div>
+</div>
+<div id="failAlert" style="display: none;">
+    <div class="weui-mask"></div>
+    <div class="weui-dialog">
+        <div class="weui-dialog__hd"><strong class="weui-dialog__title"></strong></div>
+        <div class="weui-dialog__bd"></div>
+        <div class="weui-dialog__ft">
+            <a href="javascript:;" class="weui-dialog__btn weui-dialog__btn_primary">确定</a>
+        </div>
+    </div>
+</div>
+</body>
+<script src="libs/jquery-3.2.1.min.js"></script>
+<script src="js/forget.js"></script>
+</html>

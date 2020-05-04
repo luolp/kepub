@@ -3,8 +3,9 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>可阅_登录</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <!-- 引入 WeUI -->
+    <link rel="stylesheet" href="https://res.wx.qq.com/open/libs/weui/2.3.0/weui.css"/>
     <link href="css/page/login.css" rel="stylesheet">
-    <script src="/static/libs/jquery-3.2.1.min.js"></script>
     <style>
         h1 {
             background: #fff;
@@ -41,14 +42,13 @@
 <body>
 <h1><a href="javascript:history.go(-1);">取消</a>登录</h1>
 <div class="content">
-    <form action="login.php" method="post" id="login_form">
+    <form method="post" id="login_form">
         <div class="input" id="getInput" >
-            <input name="username" id="username" type="text" placeholder="邮箱 / 可阅号" autocapitalize="off" autocorrect="off" >
+            <input name="username" type="text" placeholder="邮箱 / 可阅号" autocapitalize="off" autocorrect="off" >
         </div>
         <div class="password-input input" >
-            <input type="password" id="password2" name="password2" placeholder="密码" autocapitalize="off" autocorrect="off" >
+            <input type="password" name="password" placeholder="密码" autocapitalize="off" autocorrect="off" >
             <span class="opt eye-close" ></span>
-            <input type="hidden" id="password" name="password">
         </div>
         <div class="opt-area" >
             <button type="button" class="btn" id="submit_btn" onclick="check_input()" >登录</button>
@@ -58,7 +58,15 @@
         </div>
     </form>
 </div>
+<div id="toast" style="display:none;">
+    <div class="weui-mask_transparent"></div>
+    <div class="weui-toast">
+        <i class="weui-icon-cancel weui-icon_toast" style="color: rgba(255,255,255,0.9);width: 55px;height: 55px;"></i>
+        <p class="weui-toast__content" ></p>
+    </div>
+</div>
 </body>
-<script type="text/ecmascript" src="./api/sha1.js"></script>
+<script src="libs/jquery-3.2.1.min.js"></script>
+<script type="text/ecmascript" src="/libs/sha1.js"></script>
 <script src="js/login.js"></script>
 </html>

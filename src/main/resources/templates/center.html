@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>用户中心</title>
+    <link href="/libs/font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/base.css">
+    <link rel="stylesheet" href="/css/page/center.css">
+</head>
+<body>
+    <!--顶部 start-->
+    <div class="top-bar">
+        <a class="logo" href="/">页阅</a>
+        <div class="r">
+            <i class="fa fa-search top_icon" onclick="location.href='/search.php';"></i>
+        </div>
+    </div>
+    <!--顶部 end-->
+    <!-- 中间区域 start -->
+    <div style="margin-top: 20px;">
+        <div id="base_info">
+            <div class="head-img">
+                <img th:src="@{${user.avatar}}" th:if="${user}">
+            </div>
+            <div class="user-info" th:if="${user}">
+                <p id="username" th:text="${user.nickname}"></p>
+                <p id="qt_info">可阅号：<span th:text="${user.keno}"></span></p>
+            </div>
+            <div class="go_login" th:unless="${user}">
+                <a id="login_btn" href="/login.html">立即登录</a>
+            </div>
+        </div>
+        <ul id="btn-lists">
+            <li >
+                <div>历史记录</div>
+            </li>
+            <li >
+                <div>历史记录</div>
+            </li>
+            <li >
+                <div>历史记录</div>
+            </li>
+            <li >
+                <div>历史记录</div>
+            </li>
+        </ul>
+    </div>
+    <!-- 中间区域 end -->
+</body>
+</html>

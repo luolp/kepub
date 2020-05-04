@@ -16,4 +16,6 @@ public interface UserMapper {
     int updateByPrimaryKey(User record);
 
     User findByRecord(User record);
+
+    int activate(Integer userId);
 }

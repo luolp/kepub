@@ -1,32 +1,38 @@
+function showToast(msg, timeout = 2000) {
+    $("#toast .weui-toast__content").html(msg);
+    $("#toast").fadeIn(100);
+    setTimeout(function () {
+        $("#toast").fadeOut(100);
+    }, timeout);
+}
 function check_input(th){
     if($("#submit_btn").html()=='登录中...'){
         return;
     }
-    $("#submit_btn").html('登录中...');
 
-    var password=document.querySelector("#password2").value;
-    var username=document.querySelector("#username").value;
-    // 不让输入框值的长度发生变化,没什么特殊作用
-    // document.querySelector("#password2").value=hex_sha1(password).substring(0,password.length);
-    password=hex_sha1(password+password);
+    var username = $("input[name='username']").val();
+    var password = $("input[name='password']").val();
+    if('' == username) {showToast("请输入邮箱或可阅号"); return;}
+    if('' == password) { showToast('请输入密码'); return;}
+    var reqData = {"username":username,"password":hex_sha1(password)};
+
+    $("#submit_btn").html('登录中...');
 
     $.ajax({
         type: "post",
-        url: "login.php",
+        url: "/login",
         dataType: "json",
-        data: {username:username,
-            password:password
-        },
-        success: function (data) {
-            if (data.msg != null) {
-                my.msg(data.msg);
+        data: reqData,
+        success: function (result) {
+            if(result.code == 0){
+                location.href='/user/center';
+            }else{
+                showToast(result.msg);
+                $("#submit_btn").html('登录');
             }
-            if (data.url != null) {
-                location.href = data.url;
-            }
-            $("#submit_btn").html('登录');
         },
-        complete: function (data) {
+        error:function(msg){
+            showToast('服务器出现异常');
             $("#submit_btn").html('登录');
         }
     });

@@ -1,0 +1,14 @@
+body{background-color: #efefef;}
+#base_info{padding: 10px 20px;background-color: #fff;margin-bottom: 20px;height: 60px;}
+.head-img{float: left;}
+.head-img>img{border-radius: 2px;width: 60px;height: 60px;}
+.user-info{float: left;margin: 0 10px;padding: 6px 0;}
+#username{line-height: 28px;}
+#qt_info{line-height: 20px;font-size: 0.8em;color: #999;}
+.go_login{float: left;margin: 0 10px;padding: 6px 0;}
+#login_btn{line-height: 28px;color: #1A73E8;}
+#login_btn:link,#login_btn:visited{text-decoration:none;}
+#btn-lists>li{margin-bottom: 10px;padding: 0 10px;}
+#btn-lists>li>div{padding-left: 20px;line-height: 48px;background-color: #fff;border-left: 4px #00BFA5 solid;}
+#btn-lists>li:nth-child(3n+1)>div{border-left: 4px #FF6D00 solid;}
+#btn-lists>li:nth-child(3n+2)>div{border-left: 4px #00B8D4 solid;}

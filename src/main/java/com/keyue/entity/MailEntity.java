@@ -11,6 +11,7 @@ public class MailEntity {
     private String to;//邮件接收人（多个邮箱则用逗号","隔开）
     private String subject;//邮件主题
     private String text;//邮件内容
+    private Boolean isHtml = true; // 是否发送html格式邮件
     private Date sentDate;//发送时间
     private String cc;//抄送（多个邮箱则用逗号","隔开）
     private String bcc;//密送（多个邮箱则用逗号","隔开）
@@ -57,6 +58,14 @@ public class MailEntity {
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    public Boolean getHtml() {
+        return isHtml;
+    }
+
+    public void setHtml(Boolean html) {
+        isHtml = html;
     }
 
     public Date getSentDate() {

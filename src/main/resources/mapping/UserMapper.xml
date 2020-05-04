@@ -155,20 +155,25 @@
     <include refid="Base_Column_List" />
     from ke_user
     <where>
-
       <if test="keno != null" >
-        keno = #{keno,jdbcType=VARCHAR},
+        and keno = #{keno,jdbcType=VARCHAR}
       </if>
       <if test="email != null" >
-        email = #{email,jdbcType=VARCHAR},
+        and email = #{email,jdbcType=VARCHAR}
       </if>
       <if test="password != null" >
-        password = #{password,jdbcType=VARCHAR},
+        and password = #{password,jdbcType=VARCHAR}
       </if>
       <if test="status != null" >
-        status = #{status,jdbcType=INTEGER},
+        and status = #{status,jdbcType=INTEGER}
       </if>
     </where>
     limit 1
   </select>
+  <!-- 账号激活 -->
+  <update id="activate" parameterType="java.lang.Integer" >
+    update ke_user
+    set status = 1, update_time = NOW()
+    where status = 0 and id = #{userId,jdbcType=INTEGER}
+  </update>
 </mapper>

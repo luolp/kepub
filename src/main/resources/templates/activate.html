@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>可阅账号激活</title>
+    <!-- 引入 WeUI -->
+    <link rel="stylesheet" href="https://res.wx.qq.com/open/libs/weui/2.3.0/weui.css"/>
+    <link rel="stylesheet" href="/css/page/activate.css">
+</head>
+<body>
+    <div class="page">
+        <div class="weui-msg" th:if="${result.code} == 0">
+            <div class="weui-msg__icon-area"><i class="weui-icon-success weui-icon_msg"></i></div>
+            <div class="weui-msg__text-area">
+                <h2 class="weui-msg__title">激活成功</h2>
+            </div>
+            <div class="weui-msg__opr-area">
+                <p class="weui-btn-area">
+                    <a href="javascript:location.href='/login.html';" class="weui-btn weui-btn_primary">去登录</a>
+                </p>
+            </div>
+            <div class="weui-msg__tips-area">
+                <p class="weui-msg__tips">已经激活，去登录</p>
+            </div>
+        </div>
+        <div class="weui-msg" th:if="${result.code} != 0">
+            <div class="weui-msg__icon-area"><i class="weui-icon-warn weui-icon_msg"></i></div>
+            <div class="weui-msg__text-area">
+                <h2 class="weui-msg__title">激活失败</h2>
+                <p class="weui-msg__desc" th:text="${result.msg}"></p>
+            </div>
+            <div class="weui-msg__opr-area">
+                <p class="weui-btn-area">
+                    <a href="javascript:location.href='/index.html';" class="weui-btn weui-btn_default">回到首页</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

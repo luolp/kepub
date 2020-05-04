@@ -56,7 +56,7 @@ public class MailSend {
             messageHelper.setFrom(mailEntity.getFrom());//邮件发信人
             messageHelper.setTo(mailEntity.getTo().split(","));//邮件收信人
             messageHelper.setSubject(mailEntity.getSubject());//邮件主题
-            messageHelper.setText(mailEntity.getText());//邮件内容
+            messageHelper.setText(mailEntity.getText(), mailEntity.getHtml());//邮件内容
             if (!StringUtils.isEmpty(mailEntity.getCc())) {//抄送
                 messageHelper.setCc(mailEntity.getCc().split(","));
             }

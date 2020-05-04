@@ -3,29 +3,62 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <title>可阅_注册</title>
+    <!-- 引入 WeUI -->
+    <link rel="stylesheet" href="https://res.wx.qq.com/open/libs/weui/2.3.0/weui.css"/>
     <link href="css/page/login.css" rel="stylesheet">
-    <script src="/static/libs/jquery-3.2.1.min.js"></script>
 </head>
 <body>
     <div class="content">
         <h1 class="welcome center" onclick="location.href='http://m.liulangcat.com'">可阅</h1>
-        <form action="register.php" method="post" id="reg_form">
+        <form method="post" id="reg_form">
             <div class="input" id="getInput" >
                 <input name="email" type="text" placeholder="邮箱" autocapitalize="off" autocorrect="off" >
             </div>
             <div class="password-input input" >
-                <input type="password" name="password" placeholder="密码 (最少6位)" autocapitalize="off" autocorrect="off" >
+                <input type="password" name="password" placeholder="密码 (6~18位字母、数字、特殊符号)" autocapitalize="off" autocorrect="off" >
                 <span class="opt eye-close" ></span>
             </div>
             <div class="input" id="getNickName" >
-                <input name="username" type="text" placeholder="用户名" maxlength="16" autocapitalize="off" autocorrect="off" >
+                <input name="nickname" type="text" placeholder="昵称 (20字符内)" autocapitalize="off" autocorrect="off" >
             </div>
             <div class="opt-area" >
                 <button type="button" class="btn" id="submit_btn" onclick="check_input()" >注册</button>
             </div>
         </form>
     </div>
+    <div id="toast" style="display:none;">
+        <div class="weui-mask_transparent"></div>
+        <div class="weui-toast">
+            <i class="weui-icon-cancel weui-icon_toast" style="color: rgba(255,255,255,0.9);width: 55px;height: 55px;"></i>
+            <p class="weui-toast__content" ></p>
+        </div>
+    </div>
+    <div id="successMsg" class="weui-msg" style="display:none;">
+        <div class="weui-msg__icon-area"><i class="weui-icon-success weui-icon_msg"></i></div>
+        <div class="weui-msg__text-area">
+            <h2 class="weui-msg__title">注册成功</h2>
+            <p class="weui-msg__desc">账号激活邮件已下发到你的邮箱，访问邮件里的激活链接激活账号</p>
+        </div>
+        <div class="weui-msg__opr-area">
+            <p class="weui-btn-area">
+                <a href="javascript:location.href='/login.html';" class="weui-btn weui-btn_primary">去登录</a>
+            </p>
+        </div>
+        <div class="weui-msg__tips-area">
+            <p class="weui-msg__tips">已经激活，去登录</p>
+        </div>
+    </div>
+    <div id="failAlert" style="display: none;">
+        <div class="weui-mask"></div>
+        <div class="weui-dialog">
+            <div class="weui-dialog__hd"><strong class="weui-dialog__title"></strong></div>
+            <div class="weui-dialog__bd"></div>
+            <div class="weui-dialog__ft">
+                <a href="javascript:;" class="weui-dialog__btn weui-dialog__btn_primary">确定</a>
+            </div>
+        </div>
+    </div>
 </body>
-<script type="text/ecmascript" src="./api/sha1.js"></script>
+<script src="libs/jquery-3.2.1.min.js"></script>
 <script src="js/register.js"></script>
 </html>
