@@ -107,7 +107,7 @@ public class BookContentManager {
                     sb.insert(i+1,"</a>");
                     sb.insert(i,"<a>");
                 } else{
-                    sb.insert(i,"<a>...</a>");
+                    sb.insert(i,"<a class='marker'>1</a>");
                 }
                 cspos --;
             }
