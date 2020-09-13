@@ -27,6 +27,9 @@
 .item_top{  padding: 10px 0;  border-bottom: 1px solid #eeeeee;  }
 .top_categoryname{font-size: 16px;font-family: 'Microsoft YaHei', arial, sans-serif;color: #262b86}
 
+.cate_block_list>li{
+    margin-bottom: 10px;
+}
 ul.booklist{
 	padding:1em 2em 2em 2em;
 }
@@ -44,25 +47,28 @@ ul.booklist{
         <div class="item_content">
             <div class="item_top">
                 <p>
-                    <span class="top_categoryname"><?=$author?></span>
+                    <span class="top_categoryname" th:text="${author.authorName}"></span>
                 </p>
             </div>
 			<div style="margin-top:0.5em">
 				<div align='center'><img th:src="@{'http://liulangcat.com/authorimg/' +${author.id} + '.jpg'}"></div>
-				<div style='text-align:justify;text-justify:distribute;' th:text="${author.authorDesc}"></div>
+				<div style='text-align:justify;text-justify:distribute;' th:utext="${author.authorDesc}"></div>
 			</div>
 			<div>
-				<ul th:each = "item:${booksMap}">
+				<ul class="cate_block_list" th:each = "item:${booksMap}">
 					<li>
 						<div class="category_block">
                             <div class="item_content">
                                 <div class="item_top">
                                     <p>
-                                        <span class="top_categoryname" th:text="${item.key}">中长篇</span>
+                                        <span class="top_categoryname" th:text="${item.key}"></span>
                                     </p>
                                 </div>
-                                <ul class="booklist" th:each="book:${item.value}">
-                                    <li><span class=\"rank-digit\" th:text="${bookStat.count}"></span><a class="bookname" th:href="@{${book.bookFilePath}}" th:text="${book.bookName}"></a></li>
+                                <ul class="booklist" th:if="${item.value != null}">
+                                    <li th:each="book:${item.value}"><span class="rank-digit" th:text="${bookStat.count}"></span><a class="bookname" th:href="@{${book.bookFilePath}}" th:text="${book.bookName}"></a></li>
+                                </ul>
+                                <ul class="booklist" th:if="${item.value == null}">
+                                    <li>空</li>
                                 </ul>
                             </div>
                         </div>

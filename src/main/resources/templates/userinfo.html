@@ -1,17 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <title>个人信息</title>
-    <link href="/libs/font-awesome/css/font-awesome.css" rel="stylesheet">
     <!-- 引入 WeUI -->
     <link rel="stylesheet" href="https://res.wx.qq.com/open/libs/weui/2.3.0/weui.css"/>
+    <link href="//at.alicdn.com/t/font_2022896_14tqvgq3h0y.css" rel="stylesheet">
     <link href="/css/page/userinfo.css" rel="stylesheet">
 </head>
 <body>
 <div class="top-bar">
-    <i class="fa fa-angle-left back" onclick="javascript:history.go(-1);"></i>
+    <i class="iconfont icon-arrow-left-bold back" onclick="javascript:location.href='/user/center';"></i>
     <div>个人信息</div>
 </div>
 <div class="weui-cells">
@@ -20,48 +20,61 @@
             <p>头像</p>
         </div>
         <div class="weui-cell__ft">
-            <img class="avatar" src="http://img0.imgtn.bdimg.com/it/u=2721354077,2378460449&fm=26&gp=0.jpg">
+            <img class="avatar" th:src="@{${user.avatar}}" style="position: relative;z-index: 2;">
         </div>
         <input id="uploaderInput" class="weui-uploader__input"
-               type="file" accept="image/*" capture="camera"
-               multiple="">
+               type="file" accept="image/*" multiple="">
     </a>
-    <a class="weui-cell  weui-cell_access" href="javascript:">
+    <a class="weui-cell  weui-cell_access" th:href="@{'/update_nickname.html?nickname=' + ${user.nickname}}">
         <div class="weui-cell__bd">
             <p>昵称</p>
         </div>
-        <div class="weui-cell__ft">可阅</div>
+        <div class="weui-cell__ft" th:text="${user.nickname}"></div>
     </a>
-    <a class="weui-cell  weui-cell_access" href="javascript:">
+    <a class="weui-cell  weui-cell_access" href="/update_keno.html">
         <div class="weui-cell__bd">
             <p>可阅号</p>
         </div>
-        <div class="weui-cell__ft">keid_12323</div>
+        <div class="weui-cell__ft" th:text="${user.keno}"></div>
     </a>
 </div>
+<!--begin toast-->
+<div id="toast" style="display: none;">
+    <div class="weui-mask_transparent"></div>
+    <div class="weui-toast">
+        <i class="weui-icon-cancel weui-icon_toast" style="color: rgba(255,255,255,0.9);width: 55px;height: 55px;"></i>
+        <p class="weui-toast__content">上传失败</p>
+    </div>
+</div>
+<!--end toast-->
 <script src="/libs/jquery-3.2.1.min.js"></script>
 <script type="text/javascript" src="https://res.wx.qq.com/open/libs/weuijs/1.2.1/weui.min.js"></script>
 <script type="text/javascript">
     $(function () {
-        $(".avatar").click(function (event) {
+        $(".avatar").click(function () {
             location.href=$(this).attr('src');
-            return false;
         });
     })
 
+    function showToast(msg, timeout = 2000) {
+        $("#toast .weui-toast__content").html(msg);
+        $("#toast").fadeIn(100);
+        setTimeout(function () {
+            $("#toast").fadeOut(100);
+        }, timeout);
+    }
+
     weui.uploader('#avatar_block', {
-        url: 'http://localhost:8081',
+        url: '/Upload/uploadAvatar',
         auto: true,
         type: 'file',
-        fileVal: 'fileVal',
+        fileVal: 'file',
         compress: {
             width: 1600,
-            height: 1600,
-            quality: .8
+            height: 1600
         },
         onBeforeQueued: function (files) {
             // `this` 是轮询到的文件, `files` 是所有文件
-
             if (["image/jpg", "image/jpeg", "image/png", "image/gif"].indexOf(this.type) < 0) {
                 weui.alert('请上传图片');
                 return false; // 阻止文件添加
@@ -70,21 +83,11 @@
                 weui.alert('请上传不超过10M的图片');
                 return false;
             }
-            if (files.length > 5) { // 防止一下子选择过多文件
-                weui.alert('最多只能上传5张图片，请重新选择');
-                return false;
-            }
-            if (uploadCount + 1 > 5) {
-                weui.alert('最多只能上传5张图片');
-                return false;
-            }
-
-            ++uploadCount;
 
             // return true; // 阻止默认行为，不插入预览图的框架
         },
         onQueued: function () {
-            console.log(this);
+            // console.log(this);
 
             // console.log(this.status); // 文件的状态：'ready', 'progress', 'success', 'fail'
             // console.log(this.base64); // 如果是base64上传，file.base64可以获得文件的base64
@@ -95,22 +98,38 @@
             // return true; // 阻止默认行为，不显示预览图的图像
         },
         onBeforeSend: function (data, headers) {
-            console.log(this, data, headers);
+            // console.log(this, data, headers);
             // $.extend(data, { test: 1 }); // 可以扩展此对象来控制上传参数
             // $.extend(headers, { Origin: 'http://127.0.0.1' }); // 可以扩展此对象来控制上传头部
 
             // return false; // 阻止文件上传
         },
         onProgress: function (procent) {
-            console.log(this, procent);
             // return true; // 阻止默认行为，不使用默认的进度显示
         },
         onSuccess: function (ret) {
-            console.log(this, ret);
+            var reqData = {"avatar":ret.data.partUrl};
+            $.ajax({
+                type: "post",
+                url: "/user/update",
+                dataType: "json",
+                data: reqData,
+                success: function(result) {
+                    if(result.code == 0){
+                        $(".avatar").attr("src", ret.data.fullUrl);
+                    }else{
+                        showToast(result.msg);
+                    }
+                },
+                error:function(msg){
+                    showToast('服务器出现异常');
+                }
+            });
+
             // return true; // 阻止默认行为，不使用默认的成功态
         },
         onError: function (err) {
-            console.log(this, err);
+            showToast("上传失败");
             // return true; // 阻止默认行为，不使用默认的失败态
         }
     });

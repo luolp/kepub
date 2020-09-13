@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>日记</title>
+    <!-- 引入 WeUI -->
+    <link rel="stylesheet" href="https://res.wx.qq.com/open/libs/weui/2.3.0/weui.css"/>
+    <link href="//at.alicdn.com/t/font_2022896_14tqvgq3h0y.css" rel="stylesheet">
+    <style>
+        .diary-top-bar{height:44px;line-height: 44px;position: relative;background-color: #fcfcfc;}
+        .diary-top-bar .iconfont{position: absolute;right: 10px;font-size: 1.6em;color: #5DAC81;}
+        .diary-top-bar .icon-close{color: #CCCCCC;}
+        .diary-bottom{padding: 0 10px;}
+        .diary-bottom .base-info{font-size: 0.8em;color: #ccc;line-height: 32px;}
+        .base-info .char-num{display: inline-block;padding-left:6px;margin-left:6px;line-height:1em;border-left: 1px solid #ccc;}
+        .edit-area textarea{height: calc(100vh - 32px);font-size: 1.2em;}
+    </style>
+</head>
+<body>
+    <div class="diary-top-bar">
+        <i class="iconfont icon-select-bold" id="submit_btn" th:if="${isEdit}"></i>
+        <i class="iconfont icon-close" id="back" th:unless="${isEdit}"></i>
+    </div>
+    <div class="diary-bottom">
+        <div class="base-info" th:data-date="${diaryDate}"><span th:text="${diaryDateStr}"></span><span class="char-num" th:text="${charNum} + '字'"></span></div>
+        <div class="edit-area">
+            <textarea id="diary_content" class="weui-textarea" placeholder="言己" th:text="${userDiary.content}" th:readonly="${!isEdit}"></textarea>
+        </div>
+    </div>
+    <div id="toast" style="display:none;">
+        <div class="weui-mask_transparent"></div>
+        <div class="weui-toast">
+            <i class="weui-icon-cancel weui-icon_toast" style="color: rgba(255,255,255,0.9);width: 55px;height: 55px;"></i>
+            <p class="weui-toast__content" ></p>
+        </div>
+    </div>
+</body>
+<script src="/libs/jquery-3.2.1.min.js"></script>
+<script>
+    function showToast(msg, timeout = 2000) {
+        $("#toast .weui-toast__content").html(msg);
+        $("#toast").fadeIn(100);
+        setTimeout(function () {
+            $("#toast").fadeOut(100);
+        }, timeout);
+    }
+    $(function () {
+
+        function countCharNum(){
+            var content = $("#diary_content").val();
+            content = content.replace(/\s/g, "");
+            var charNum = content.length;
+            $(".char-num").text(charNum + "字");
+        }
+
+       $("#submit_btn").click(function () {
+           var diaryDate = $(".base-info").data('date');
+           var content = $("#diary_content").val();
+           var data = {"diaryDate":diaryDate, "content":content};
+           $.ajax({
+               url :"/user/saveDiary",
+               type : "POST",
+               data : data,
+               dataType : "json",
+               success : function(result) {
+                   if(result.code == 0) {
+                       location.href="/user/center";
+                   } else {
+                       showToast("保存失败，请再次提交");
+                   }
+               },
+               error:function(msg){
+                   showToast('服务器出现异常');
+               }
+           });
+       });
+
+        $("#back").click(function(){
+            location.href="/user/center";
+        });
+
+        $('.edit-area').bind('input','#diary_content',function(){
+            countCharNum();
+        });
+    });
+</script>
+</html>

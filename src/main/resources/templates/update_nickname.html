@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>修改昵称</title>
+    <!-- 引入 WeUI -->
+    <link rel="stylesheet" href="https://res.wx.qq.com/open/libs/weui/2.3.0/weui.css"/>
+    <link href="//at.alicdn.com/t/font_2022896_14tqvgq3h0y.css" rel="stylesheet">
+    <style>
+        .page {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            box-sizing: border-box;
+            z-index: 1;
+        }
+        #close_btn{position: fixed; top: 10px; right: 16px;}
+        .icon-close{color: #ccc; font-size: 24px;}
+    </style>
+</head>
+<body>
+    <div class="page">
+        <div id="close_btn"><i class="iconfont icon-close back"></i></div>
+        <div class="weui-form">
+            <div class="weui-form__text-area">
+                <h2 class="weui-form__title">修改昵称</h2>
+                <div class="weui-form__desc">长度不能超过20个字符</div>
+            </div>
+            <div class="weui-form__control-area">
+                <div class="weui-cells__group weui-cells__group_form">
+                    <div class="weui-cells weui-cells_form">
+                        <div class="weui-cell weui-cell_active">
+                            <input name="nickname" class="weui-input" id="nickname_input" placeholder="请填写昵称" th:value="${nickname}"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="weui-form__opr-area">
+                <a class="weui-btn weui-btn_primary" href="javascript:" id="submit_btn">确定</a>
+            </div>
+        </div>
+        <div id="js_toast" style="display: none;">
+            <div class="weui-mask_transparent"></div>
+            <div class="weui-toast">
+                <i class="weui-icon-success-no-circle weui-icon_toast"></i>
+                <p class="weui-toast__content">已完成</p>
+            </div>
+        </div>
+    </div>
+    <!--begin toast-->
+    <div id="toast" style="display: none;">
+        <div class="weui-mask_transparent"></div>
+        <div class="weui-toast">
+            <i class="weui-icon-cancel weui-icon_toast" style="color: rgba(255,255,255,0.9);width: 55px;height: 55px;"></i>
+            <p class="weui-toast__content">修改失败</p>
+        </div>
+    </div>
+    <!--end toast-->
+    <script src="/libs/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" th:inline="javascript">
+        // 返回
+        $(".back").click(function(){
+            location.href="/user/userinfo";
+        });
+
+        function showToast(msg, timeout = 2000) {
+            $("#toast .weui-toast__content").html(msg);
+            $("#toast").fadeIn(100);
+            setTimeout(function () {
+                $("#toast").fadeOut(100);
+            }, timeout);
+        }
+
+        $(function () {
+            changeBtnStatus();
+            $("#nickname_input").keyup(function(){
+                changeBtnStatus();
+            });
+
+            $("#submit_btn").click(function () {
+                if($(this).hasClass("weui-btn_disabled")){
+                    return;
+                }
+                var reqData = {"nickname":$("#nickname_input").val()};
+                $.ajax({
+                    type: "post",
+                    url: "/user/update",
+                    dataType: "json",
+                    data: reqData,
+                    success: function(result) {
+                        if(result.code == 0){
+                            location.href="/user/userinfo";
+                        }else{
+                            showToast(result.msg);
+                        }
+                    },
+                    error:function(msg){
+                        showToast('服务器出现异常');
+                    }
+                });
+            });
+
+            function changeBtnStatus() {
+                var valLength = $("#nickname_input").val().length;
+                if(valLength == 0 || valLength > 20) {
+                    $("#submit_btn").addClass("weui-btn_disabled");
+                }else{
+                    $("#submit_btn").removeClass("weui-btn_disabled");
+                }
+            }
+        });
+    </script>
+</body>
+</html>

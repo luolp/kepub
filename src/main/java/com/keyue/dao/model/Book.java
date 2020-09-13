@@ -26,6 +26,8 @@ public class Book {
 
     private String cateName;
 
+    private String keyword;
+
 
     public Integer getId() {
         return id;
@@ -113,6 +115,14 @@ public class Book {
 
     public void setCateName(String cateName) {
         this.cateName = cateName;
+    }
+
+    public String getKeyword() {
+        return keyword;
+    }
+
+    public void setKeyword(String keyword) {
+        this.keyword = keyword;
     }
 
     public String getBookFilePath() {

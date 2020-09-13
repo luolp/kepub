@@ -13,12 +13,14 @@
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="author_name" property="authorName" jdbcType="VARCHAR" />
     <result column="cate_name" property="cateName" jdbcType="VARCHAR" />
+
+      <result column="author_name" property="authorName" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
     id, book_no, book_name, author_id, cate_id, book_desc, sort, status, create_time
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
-    select 
+    select
     <include refid="Base_Column_List" />
     from book
     where id = #{id,jdbcType=INTEGER}
@@ -28,12 +30,12 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.keyue.dao.model.Book" >
-    insert into book (id, book_no, book_name, 
-      author_id, cate_id, book_desc, 
+    insert into book (id, book_no, book_name,
+      author_id, cate_id, book_desc,
       sort, status, create_time
       )
-    values (#{id,jdbcType=INTEGER}, #{bookNo,jdbcType=VARCHAR}, #{bookName,jdbcType=VARCHAR}, 
-      #{authorId,jdbcType=INTEGER}, #{cateId,jdbcType=INTEGER}, #{bookDesc,jdbcType=VARCHAR}, 
+    values (#{id,jdbcType=INTEGER}, #{bookNo,jdbcType=VARCHAR}, #{bookName,jdbcType=VARCHAR},
+      #{authorId,jdbcType=INTEGER}, #{cateId,jdbcType=INTEGER}, #{bookDesc,jdbcType=VARCHAR},
       #{sort,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}
       )
   </insert>
@@ -186,7 +188,8 @@ WHERE
       AND cate_id = #{cateId,jdbcType=INTEGER}
     </if >
     <if test="keyword!=null and keyword != ''">
-      AND (author_name like #{keyword} or book_name like #{keyword})
+      AND (author_name LIKE CONCAT(CONCAT('%',#{keyword,jdbcType=VARCHAR},'%'))
+        or book_name LIKE CONCAT(CONCAT('%',#{keyword,jdbcType=VARCHAR},'%')))
     </if >
 AND book.author_id = author.id
 AND book.cate_id = book_cate.id
@@ -255,5 +258,32 @@ ORDER BY
 	book.sort DESC,
 	book.id DESC
   </select>
+
+    <select id="selectList" resultMap="BaseResultMap" parameterType="com.keyue.dao.model.Book" >
+        select
+        book.*,author.author_name
+        from book
+        INNER JOIN author ON author.id = book.author_id
+        <where >
+            book.status = 1
+            <if test="bookNo != null" >
+                and book_no = #{bookNo,jdbcType=VARCHAR}
+            </if>
+            <if test="bookName != null" >
+                and book_name = #{bookName,jdbcType=VARCHAR}
+            </if>
+            <if test="authorId != null" >
+                and author_id = #{authorId,jdbcType=INTEGER}
+            </if>
+            <if test="cateId != null" >
+                and cate_id = #{cateId,jdbcType=INTEGER}
+            </if>
+            <if test="keyword!=null and keyword != ''">
+                and (author_name LIKE CONCAT(CONCAT('%',#{keyword,jdbcType=VARCHAR},'%'))
+                or book_name LIKE CONCAT(CONCAT('%',#{keyword,jdbcType=VARCHAR},'%')))
+            </if >
+        </where>
+        order by sort DESC,id DESC
+    </select>
 
 </mapper>

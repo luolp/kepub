@@ -1,6 +1,7 @@
 package com.keyue.dao.model;
 
 import java.util.Date;
+import java.util.List;
 
 public class BookChapter {
     private Integer id;
@@ -11,15 +12,13 @@ public class BookChapter {
 
     private String chapterName;
 
-    private Integer chapterNo2;
-
-    private Integer fatherNo;
-
-    private Integer isHasContent;
+    private Integer parentNo;
 
     private String fileUrl;
 
     private Date createTime;
+
+    private List<BookChapter> children;
 
     public Integer getId() {
         return id;
@@ -53,28 +52,12 @@ public class BookChapter {
         this.chapterName = chapterName == null ? null : chapterName.trim();
     }
 
-    public Integer getChapterNo2() {
-        return chapterNo2;
+    public Integer getParentNo() {
+        return parentNo;
     }
 
-    public void setChapterNo2(Integer chapterNo2) {
-        this.chapterNo2 = chapterNo2;
-    }
-
-    public Integer getFatherNo() {
-        return fatherNo;
-    }
-
-    public void setFatherNo(Integer fatherNo) {
-        this.fatherNo = fatherNo;
-    }
-
-    public Integer getIsHasContent() {
-        return isHasContent;
-    }
-
-    public void setIsHasContent(Integer isHasContent) {
-        this.isHasContent = isHasContent;
+    public void setParentNo(Integer parentNo) {
+        this.parentNo = parentNo;
     }
 
     public String getFileUrl() {
@@ -91,5 +74,13 @@ public class BookChapter {
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
+    }
+
+    public List<BookChapter> getChildren() {
+        return children;
+    }
+
+    public void setChildren(List<BookChapter> children) {
+        this.children = children;
     }
 }

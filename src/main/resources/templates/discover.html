@@ -3,7 +3,7 @@
 <html xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
-	
+
     <meta name="viewport" content="width=device-width, initial-scale=1">
 	<script src="/libs/jquery-3.2.1.min.js"></script>
 	<title>随机阅读</title>
@@ -48,34 +48,24 @@ ul.booklist{
 <body>
 	<div class="main_block">
         <div class="item_content">
-		
             <div class="item_top">
 				<p style="text-align:right;margin:0;">
-					<i class="fa fa-refresh" style="padding:10px;padding-right:20px;" onclick="location.href='discover.html';"></i>
+					<i class="fa fa-refresh discover-refresh" style="padding:10px;padding-right:20px;"></i>
                 </p>
             </div>
-			
 			<div style="padding-top:0.5em">
-				
-				<div style='line-height:1.5em;text-align:justify;text-justify:distribute;' th:inline="text">
-					[[${book}]]
-				</div>
-				
+				<div style='line-height:1.5em;text-align:justify;text-justify:distribute;' th:utext="${content}"></div>
 			</div>
 			<div>
 				<p style="text-align:right;margin:0;">
-					<i class="fa fa-refresh" style="padding:10px;padding-right:20px;" onclick="location.href='discover.html';"></i>
+					<i class="fa fa-refresh discover-refresh" style="padding:10px;padding-right:20px;"></i>
                 </p>
             </div>
 			<div style='line-height:80px;padding-right:20px;text-align:right;'>
-				<a th:href="@{${book.bookFilePath}}" th:text="${book.bookName}"> </a><a class=\"author\" th:href="@{${book.authorPagePath}}" hidden>作者</a>
+				<a th:href="@{${book.bookFilePath}}" th:text="'《' + ${book.bookName} + '》'"> </a><a class=\"author\" th:href="@{${book.authorPagePath}}" hidden>作者</a>
 			</div>
-			
         </div>
-		
     </div>
-	
-
 
 <!-- 流量统计 -->
 <div style="display:none">
@@ -90,5 +80,10 @@ ul.booklist{
 	function goHome(){
 		document.location.href="/index.html";
 	}
+    $(function(){
+        $(".discover-refresh").click(function () {
+            location.href = 'discover.html?time=' + new Date().getTime();
+        });
+	});
 </script>
 </html>

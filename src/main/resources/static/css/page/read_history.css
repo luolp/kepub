@@ -1,14 +1,19 @@
-body{margin: 0;}
+body{margin: 0;background-color: #efefef;}
 .top-bar {
     background: #fff;
     height: 45px;
     line-height: 45px;
     border-bottom: 1px solid #eee;
-    padding: 0 18px;
+    padding: 0 12px;
     text-align: center;
     font-size: 16px;
     /*font-weight: bold;*/
     color: #666666;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 99;
 }
 
 .back{
@@ -17,10 +22,4 @@ body{margin: 0;}
     font-size: 1.2em;
 }
 
-.avatar{
-    border-radius: 2px;width: 60px;height: 60px;vertical-align:middle;
-}
-
-.weui-cells{margin-top: 0;}
-.weui-cells:before{display: none;}
-.avatar-cell{padding-top: 8px; padding-bottom: 8px;}
+/* 历史记录列表 */

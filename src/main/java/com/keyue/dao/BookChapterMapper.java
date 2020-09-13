@@ -19,4 +19,6 @@ public interface BookChapterMapper {
     int updateByPrimaryKey(BookChapter record);
 
     List<BookChapter> queryChapterListByBookNo(@Param("bookNo") String bookNo);
+
+    BookChapter randomChapter();
 }

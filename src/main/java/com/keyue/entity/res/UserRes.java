@@ -1,5 +1,7 @@
 package com.keyue.entity.res;
 
+import java.util.Date;
+
 public class UserRes {
     private String keno;
 
@@ -8,6 +10,10 @@ public class UserRes {
     private String nickname;
 
     private String avatar;
+
+    private Boolean isCanUpdateKeno;
+
+    private Date createTime;
 
     public String getKeno() {
         return keno;
@@ -39,5 +45,21 @@ public class UserRes {
 
     public void setAvatar(String avatar) {
         this.avatar = avatar;
+    }
+
+    public Boolean getCanUpdateKeno() {
+        return isCanUpdateKeno;
+    }
+
+    public void setCanUpdateKeno(Boolean canUpdateKeno) {
+        isCanUpdateKeno = canUpdateKeno;
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
     }
 }

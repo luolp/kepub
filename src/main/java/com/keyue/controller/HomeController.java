@@ -1,13 +1,21 @@
 package com.keyue.controller;
 
+import com.keyue.common.util.CommonUtil;
 import com.keyue.dao.model.Book;
-import com.keyue.entity.RequestParams4Reader;
+import com.keyue.dao.model.UserReadHistory;
+import com.keyue.entity.ResultModel;
 import com.keyue.service.IBookService;
+import com.keyue.service.IUserService;
+import com.keyue.utils.CookieUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -17,13 +25,15 @@ public class HomeController {
 
     @Autowired
     private IBookService bookService;
+    @Autowired
+    private IUserService userService;
 
-    @RequestMapping(value = "/index.html",method = RequestMethod.GET)
+    @RequestMapping(value = {"/", "/index.html"}, method = RequestMethod.GET)
     public String index(Model model)
     {
         Map<String, Object> attrs = bookService.queryBooks4IndexPage();
         model.addAllAttributes(attrs);
-        return "index.php";
+        return "index";
     }
 
     @RequestMapping(value = "/search.html",method = RequestMethod.GET)
@@ -33,6 +43,7 @@ public class HomeController {
         model.addAllAttributes(attrs);
         return "search";
     }
+
     @RequestMapping(value = "/categoryIndex.html",method = RequestMethod.GET)
     public String categoryIndex(Model model, @RequestParam(value = "cateId", defaultValue = "1") Integer cateId)
     {
@@ -41,11 +52,21 @@ public class HomeController {
         return "categoryIndex";
     }
 
-    @RequestMapping(value = "/discover.html",method = RequestMethod.GET)
-    public String discover(Model model)
+    @RequestMapping(value = "/queryBookByPage",method = RequestMethod.GET)
+    @ResponseBody
+    public ResultModel<List<Book>> queryBookByPage(Book book,
+                                                   @RequestParam(value = "page", defaultValue = "1") Integer page,
+                                                   @RequestParam(value = "limit", defaultValue = "15") Integer limit)
     {
-        Book book = bookService.getRandomBook();
-        model.addAttribute("book",book);
+        return bookService.queryBookByPage(book, page, limit);
+    }
+
+
+    @RequestMapping(value = "/discover.html",method = RequestMethod.GET)
+    public String discover(Model model, String time)
+    {
+        Map<String, Object> attrs = bookService.getRandomChapter(time);
+        model.addAllAttributes(attrs);
         return "discover";
     }
 
@@ -56,6 +77,13 @@ public class HomeController {
     {
         Map<String, Object> attrs = bookService.queryInfo4Reader(bookNo, chaptherNum);
         model.addAllAttributes(attrs);
+
+        // 保存阅读记录
+        int userId = CommonUtil.getUserId();
+        if (userId > 0) {
+            userService.saveReadHistory(userId, bookNo, chaptherNum);
+        }
+
         return "reader";
     }
 

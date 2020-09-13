@@ -21,6 +21,8 @@ public class RegexUtil {
     public static final String REGEX_NICKNAME = "^.{1,20}$";
     // 密码（字母、数字、特殊符号，6~18位)
     public static final String REGEX_PASSWORD = "^[0-9A-Za-z._~!@#$%^&*?\\(\\)\\-+=,]{6,18}$";
+    // 可阅号（字母、数字，6~18位)
+    public static final String REGEX_KNO = "^[0-9A-Za-z]{6,18}$";
 
 
     public static boolean isMatch(final String regex, final CharSequence input) {
@@ -97,5 +99,14 @@ public class RegexUtil {
      */
     public static boolean isPassword(String password) {
         return isMatch(REGEX_PASSWORD, password);
+    }
+
+    /**
+     * 可阅号
+     * @param keno
+     * @return
+     */
+    public static boolean isKeno(String keno) {
+        return isMatch(REGEX_KNO, keno);
     }
 }

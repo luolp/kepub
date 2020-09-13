@@ -29,6 +29,7 @@
 	.main_block{ border-top: 4px #FF6D00 solid;  background-color: #ffffff}
 	.category_block{ border-top: 1px #eeeeee solid;  background-color: #ffffff}
 
+	.chapter_block_list>li{margin-bottom: 10px;}
 	.item_content{  border: 1px #eeeeee solid;  border-top: none;  padding: 0 18px;  }
 	.item_top{  padding: 10px 0;  border-bottom: 1px solid #eeeeee;  }
 	.top_categoryname,.top_right_a{font-size: 16px;font-family: 'Microsoft YaHei', arial, sans-serif;color: #262b86}
@@ -36,7 +37,6 @@
 	ul.booklist{
 		padding:1em 2em 2em 2em;
 	}
-
 
 	.rank-digit{  display: inline-block;  width: 18px;  font-size: 12px;
 		height: 14px;  line-height: 14px;  text-align: center;
@@ -67,30 +67,26 @@
 				<span class="top_categoryname" th:text="${book.bookName}"></span>
 				<span class="top_right_a"><a href="javascript:;" onclick="goHome()">主页</a></span>
 			</p>
-
 		</div>
 
 		<div style="margin-top:0.5em">
-
-			<ul>
-
-				<li>
+			<ul class="chapter_block_list">
+				<li th:each="item : ${chapterTree}">
 					<div class="category_block">
 						<div class="item_content">
 							<div class="item_top">
 								<p>
-					<span class="top_categoryname">目录</span>
+									<span class="top_categoryname" th:text="${item.chapterName}"></span>
 								</p>
 							</div>
-							<ul class="booklist" th:each="item : ${chapterList}">
-								<li>
-									<span class="rank-digit" th:text="${item.chapterNo}"></span><a class='clink' th:href="@{'/reader.html?bookNo=' + ${book.bookNo} + '&chaptherNum=' + ${item.chapterNo}}" th:text="${item.chapterName}"></a>
+							<ul class="booklist">
+								<li th:each="item2 : ${item['children']}">
+									<span class="rank-digit" th:text="${item2Stat.index + 1}"></span><a class='clink' th:href="@{'/reader.html?bookNo=' + ${item2.bookNo} + '&chaptherNum=' + ${item2.chapterNo}}" th:text="${item2.chapterName}"></a>
 								</li>
-						</ul>
+							</ul>
 						</div>
 					</div>
 				</li>
-
 			</ul>
 
 

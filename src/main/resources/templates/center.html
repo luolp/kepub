@@ -4,21 +4,39 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <title>用户中心</title>
-    <link href="/libs/font-awesome/css/font-awesome.css" rel="stylesheet">
-    <link rel="stylesheet" href="/css/base.css">
-    <link rel="stylesheet" href="/css/page/center.css">
+    <!-- 引入 WeUI -->
+    <link rel="stylesheet" href="https://res.wx.qq.com/open/libs/weui/2.3.0/weui.css"/>
+    <link href="//at.alicdn.com/t/font_2022896_14tqvgq3h0y.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/base.css?v=1">
+    <link rel="stylesheet" href="/css/page/center.css?v=2">
 </head>
 <body>
     <!--顶部 start-->
-    <div class="top-bar">
-        <a class="logo" href="/">页阅</a>
-        <div class="r">
-            <i class="fa fa-search top_icon" onclick="location.href='/search.php';"></i>
+    <div class="center-top-bar">
+        <div class="top-btn-group">
+            <i class="iconfont icon-home" id="home_btn"></i>
+            <i class="iconfont icon-more_android_light" id="more_btn"></i>
         </div>
     </div>
     <!--顶部 end-->
+    <!-- 顶部的more菜单 start-->
+    <div id="more_nav" hidden>
+        <div class="triangle arrows"></div>
+        <ul id="nav_list">
+            <!--<li>-->
+                <!--<i class="iconfont icon-setting"></i>-->
+                <!--<div>设置</div>-->
+            <!--</li>-->
+            <li id="exit_btn">
+                <i class="iconfont icon-exit"></i>
+                <div>退出登录</div>
+            </li>
+        </ul>
+    </div>
+    <div class="mask_block" hidden></div>
+    <!-- 顶部的more菜单 end -->
     <!-- 中间区域 start -->
-    <div style="margin-top: 20px;">
+    <div>
         <div id="base_info">
             <div class="head-img">
                 <img th:src="@{${user.avatar}}" th:if="${user}">
@@ -31,21 +49,83 @@
                 <a id="login_btn" href="/login.html">立即登录</a>
             </div>
         </div>
-        <ul id="btn-lists">
-            <li >
-                <div>历史记录</div>
-            </li>
-            <li >
-                <div>历史记录</div>
-            </li>
-            <li >
-                <div>历史记录</div>
-            </li>
-            <li >
-                <div>历史记录</div>
-            </li>
-        </ul>
+        <div class="clearfix" id="rect_block">
+            <ul class="clearfix" id="rect_list" th:style="'width:' + ${rects.size()/7*100/20} + 'vw'">
+                <li th:each="rect : ${rects}" th:if="${rectStat.index % 7 == 0}" th:class="'rect ' + ${rect.rectType}" th:data-date="${rect.recordDate}"></li>
+                <li th:each="rect : ${rects}" th:if="${rectStat.index % 7 == 1}" th:class="'rect ' + ${rect.rectType}" th:data-date="${rect.recordDate}"></li>
+                <li th:each="rect : ${rects}" th:if="${rectStat.index % 7 == 2}" th:class="'rect ' + ${rect.rectType}" th:data-date="${rect.recordDate}"></li>
+                <li th:each="rect : ${rects}" th:if="${rectStat.index % 7 == 3}" th:class="'rect ' + ${rect.rectType}" th:data-date="${rect.recordDate}"></li>
+                <li th:each="rect : ${rects}" th:if="${rectStat.index % 7 == 4}" th:class="'rect ' + ${rect.rectType}" th:data-date="${rect.recordDate}"></li>
+                <li th:each="rect : ${rects}" th:if="${rectStat.index % 7 == 5}" th:class="'rect ' + ${rect.rectType}" th:data-date="${rect.recordDate}"></li>
+                <li th:each="rect : ${rects}" th:if="${rectStat.index % 7 == 6}" th:class="'rect ' + ${rect.rectType}" th:data-date="${rect.recordDate}"></li>
+            </ul>
+        </div>
+        <div class="weui-cells" style="margin-top: 0;">
+            <a class="weui-cell  weui-cell_access" href="/read_history.html">
+                <div class="weui-cell__bd">
+                    <p>历史记录</p>
+                </div>
+                <div class="weui-cell__ft">
+                </div>
+            </a>
+            <a class="weui-cell  weui-cell_access" href="javascript:">
+                <div class="weui-cell__bd">
+                    <p>历史记录</p>
+                </div>
+                <div class="weui-cell__ft">
+                </div>
+            </a>
+            <a class="weui-cell  weui-cell_access" href="javascript:">
+                <div class="weui-cell__bd">
+                    <p>历史记录</p>
+                </div>
+                <div class="weui-cell__ft">
+                </div>
+            </a>
+            <a class="weui-cell  weui-cell_access" href="javascript:">
+                <div class="weui-cell__bd">
+                    <p>历史记录</p>
+                </div>
+                <div class="weui-cell__ft">
+                </div>
+            </a>
+        </div>
     </div>
     <!-- 中间区域 end -->
+    <script src="/libs/jquery-3.2.1.min.js"></script>
+    <script>
+        $(function(){
+            $("#home_btn").click(function () {
+                location.href = '/';
+            });
+            $("#more_btn").click(function () {
+                $("#more_nav").toggle();
+                $(".mask_block").toggle();
+            });
+            $("#exit_btn").click(function () {
+                location.href = '/login.html';
+                // todo 调用接口清除session
+            });
+            $(".mask_block").click(function () {
+                $("#more_nav").hide();
+                $(".mask_block").hide();
+            });
+            $("#base_info").click(function () {
+                location.href = '/user/userinfo';
+            });
+            $(".rect").click(function () {
+                if(!$(this).hasClass("empty")){
+                    var date = $(this).data('date');
+                    location.href = '/user/diary?date=' + date;
+                }
+            });
+
+
+            // document.onclick=hiddenLeft;
+            // document.getElementById("left").onclick=function(){
+            //     event.stopPropagation();
+            // }
+        });
+    </script>
 </body>
 </html>

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>历史记录</title>
+    <!-- 引入 WeUI -->
+    <link rel="stylesheet" href="https://res.wx.qq.com/open/libs/weui/2.3.0/weui.css"/>
+    <link href="//at.alicdn.com/t/font_2022896_14tqvgq3h0y.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/base.css?v=1">
+    <link rel="stylesheet" href="/css/page/read_history.css?v=1">
+    <style>
+        #history_list{padding: 51px 10px 6px 10px;}
+        #history_list>li{background-color: #ffffff;border-radius: 4px;padding: 6px 10px;position: relative;margin-bottom: 6px;}
+        .book_name{padding: 4px 0 6px 0;color: #33A6B8;}
+        .chapter_name{font-size: .8em;color: #999;margin-bottom: 6px;}
+        .read_time{font-size: .8em;color: #ccc;border-top: 1px dashed #f6f6f6;padding: 2px 0;}
+        .del_btn{position: absolute;right: 0;top: 0;width: 20px;height: 20px;}
+        .del_btn>i{font-size: .8em;color: #aaa;}
+
+        /* 加载更多 */
+        .weui-loadmore_line .weui-loadmore__tips{background-color: #efefef;}
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <i class="iconfont icon-arrow-left-bold back" onclick="javascript:location.href='/user/center';"></i>
+        <div>历史记录</div>
+    </div>
+    <div>
+        <ul id="history_list">
+
+        </ul>
+        <div class="weui-loadmore loading" hidden>
+            <i class="weui-loading"></i>
+            <span class="weui-loadmore__tips">正在加载</span>
+        </div>
+        <div class="weui-loadmore weui-loadmore_line no_data" hidden>
+            <span class="weui-loadmore__tips">暂无数据</span>
+        </div>
+        <div class="weui-loadmore weui-loadmore_line load_finish" hidden>
+            <span class="weui-loadmore__tips">加载完毕</span>
+        </div>
+    </div>
+    <input class="current-page" type="hidden" value="0">
+    <script src="/libs/jquery-3.2.1.min.js"></script>
+    <script>
+        $(function(){
+            // 标识正在加载下一页
+            var loading=0;
+            var finish=0;
+            load(); // 加载第一页
+
+            $("#history_list").on('click','li',function(){
+                var bookNo = $(this).data('book-no');
+                var chapterNo = $(this).data('chapter-no');
+                location.href = '/reader.html?bookNo=' + bookNo + '&chaptherNum=' + chapterNo;
+            });
+            $("#history_list").on('click','.del_btn',function(event){
+                event.stopPropagation();
+                var id = $(this).data('id');
+                // 发起了删除请求即可，不管是否成功都隐藏该条数据
+                $.ajax({
+                    url :"/delReadHistory",
+                    type : "POST",
+                    data : {"id": id},
+                    dataType : "json"
+                });
+                $(this).parent().hide();
+            });
+
+            // 下滑加载更多
+            $(window).on("resize scroll",function(){
+                var windowHeight = $(window).height();//当前窗口的高度
+                var scrollTop = $(window).scrollTop();//当前滚动条从上往下滚动的距离
+                var docHeight = $(document).height(); //当前文档的高度
+                var offest = windowHeight / 3; // 提前加载
+                if (scrollTop + windowHeight + offest >= docHeight) {
+                    load(); // 滑动到底部加载
+                }
+            });
+
+            function load() {
+                if(loading === 1 || finish === 1){
+                    return false;
+                }
+                loading=1;
+                $(".loading").show();
+                var c_page=$(".current-page").val();
+                c_page=parseInt(c_page)+1;
+                $.ajax({
+                    url:'/queryReadHistoryByPage?page='+c_page,
+                    dataType:'json',
+                    success:function(result){
+                        if(result.data.length === 0) {
+                            if(c_page === 1){
+                                $(".no_data").show();
+                            }else{
+                                $(".load_finish").show();
+                            }
+                            finish=1;
+                            return;
+                        }
+                        var html="";
+                        $.each(result.data, function(index,item)
+                        {
+                            html="<li data-book-no=\"" + item.bookNo + "\" data-chapter-no=\"" + item.chapterNo + "\">";
+                            html+="<div class=\"book_name\">" + item.bookName + "</div>";
+                            html+="<div class=\"chapter_name\">" + item.chapterName + "</div>";
+                            html+="<div class=\"read_time\">" + item.lastReadTime + "</div>";
+                            html+="<div class=\"del_btn\" data-id=\"" + item.id + "\"><i class=\"iconfont icon-close\"></i></div>";
+                            html+="</li>";
+                            $("#history_list").append(html);
+                        });
+                        $(".current-page").val(c_page);
+                    },
+                    complete:function(){
+                        loading=0;
+                        $(".loading").hide();
+                    }
+                })
+            }
+
+        });
+    </script>
+</body>
+</html>

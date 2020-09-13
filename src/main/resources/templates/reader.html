@@ -4,7 +4,6 @@
 
 <head th:inline="text">
     <meta charset="UTF-8">
-	
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="libs/jquery-3.2.1.min.js"></script>
     <script src="js/selectionListener.js"></script>
@@ -26,7 +25,7 @@
                 </p>
 
             </div>
-			
+
 			<div style="margin-top:0.5em">
 
 				<div style='line-height:1.5em;text-align:justify;text-justify:distribute;' th:utext="${content}">
@@ -35,10 +34,14 @@
         </div>
 
 		<p style="height: 21px;">
-            <!--<span class="bottom_left_a" th:if="${preChapter == null}}"><a th:href="@{'/reader.html?bookNo=' + ${book.bookNo} + '&chaptherNum=' + ${preChapter.chapterNo}}">上一章</a></span>-->
-			<!--<span class="top_right_a" th:if="${nextChapter == null}}"><a th:href="@{'/reader.html?bookNo=' + ${book.bookNo} + '&chaptherNum=' + ${nextChapter.chapterNo}}">下一章</a></span>-->
-			<!--<span class="top_right_a" th:if="${nextChapter != null}}">完</span>-->
+            <span class="bottom_left_a" th:if="${preChapter != null}"><a th:href="@{'/reader.html?bookNo=' + ${book.bookNo} + '&chaptherNum=' + ${preChapter.chapterNo}}">上一章</a></span>
+			<span class="top_right_a" th:if="${nextChapter != null}"><a th:href="@{'/reader.html?bookNo=' + ${book.bookNo} + '&chaptherNum=' + ${nextChapter.chapterNo}}">下一章</a></span>
+			<span class="top_right_a" th:if="${nextChapter == null}">完</span>
         </p>
+    </div>
+    <div>
+        <input type="hidden" id="bookNo" th:value="${book.bookNo}">
+        <input type="hidden" id="chapterNo" th:value="${currentChapter.chapterNo}">
     </div>
 	<div id="goods_block">
 
@@ -53,43 +56,18 @@
 
 </body>
 <script>
-
 	function goHome(){
 		document.location.href="/index.html";
 	}
 	$(function(){
-		$("#goods_block").on('click','.goods_item',function(){
-			var ad_id = $(this).data("id");
-			var goods_id = $(this).data("gid");
-			$.ajax({
-				url :"http://106.14.220.17:8070/Operation/adGoodsClick",
-				type : "POST",
-				data : {"adId":ad_id, "showPage":"<?=$book ?>_<?=$chapter ?>"},//todo
-				dataType : "json",
-				success : function(result) {
+        var bookNo = $("#bookNo").val();
+        var chapterNo = $("#chapterNo").val();
 
-				}
-			})
-			window.open("https://t.asczwa.com/taobao?backurl=https%3a%2f%2fh5.m.taobao.com%2fawp%2fcore%2fdetail.htm%3fid%3d"+goods_id,"_blank");
-		});
-		if(true){	//该html只是阅读页面,不含目录页
-			$.ajax({
-				url :"http://106.14.220.17:8070/Operation/getRandomAdGoods",
-				type : "GET",
-				dataType : "json",
-				success : function(result) {
-					var data = result.data;
-					var html ='<div class="goods_item" data-id="'+data.id+'" data-gid="'+data.goodsId+'">'
-							+ '<img src="'+data.goodsImg+'">'
-							+ '<div class="goods_info">'
-							+ '<p class="goods_title">'+data.goodsName+'</p>'
-							+ '<p class="goods_price"><span>¥</span> <span>'+data.goodsPrice+'</span></p>'
-							+ '</div>'
-							+ '</div>';
-					$("#goods_block").html(html);
-				}
-			})
-		}
+        var read_pos_top = localStorage.getItem("read_pos_top_" + bookNo + "_" + chapterNo);
+        if(read_pos_top != null) {
+            $(window).scrollTop(read_pos_top);
+        }
+
         $(".main_block").on('click','.marker',function(){
             $(this).removeClass('marker');
             $(this).addClass('marker_show');
@@ -99,6 +77,43 @@
             $(this).removeClass('marker_show');
             $(this).addClass('marker');
             $(this).html('注');
+        });
+        // 上报阅读时长
+        var noRecordDuration = 0; // 未上报的阅读时长（秒）
+        var noScrollDuration = 0; // 屏幕未滚动的时长（秒）
+        var isReading = true; // 是否阅读中
+
+        // 5s执行一次
+        setInterval(function(){
+            noScrollDuration = noScrollDuration + 5;
+            if(noScrollDuration > 60) {
+                isReading = false;
+            }
+            if(isReading) {
+                noRecordDuration = noRecordDuration + 5;
+            }
+            if(noRecordDuration >= 30){
+                var data = {"bookNo":bookNo, "chapterNo":chapterNo, "duration": noRecordDuration};
+                $.ajax({
+                    url :"/user/saveVisitTimeLog",
+                    type : "POST",
+                    data : data,
+                    dataType : "json",
+                    success : function(result) {
+                        if(result.code == 0) {
+                            noRecordDuration = 0;
+                        }
+                    }
+                });
+            }
+        }, 5000);
+
+        $(window).scroll(function() {
+            isReading = true;
+            noScrollDuration = 0;
+
+            lastScrollTime = (new Date()).getTime();
+            localStorage.setItem("read_pos_top_" + bookNo + "_" + chapterNo, $(window).scrollTop());
         });
 	});
 </script>
@@ -123,7 +138,8 @@
 
         $.post("/marker/commitMarker",postData);
 
-        alert('mouseup function is running !');
+        // alert('mouseup function is running !');
     });
 </script>
+
 </html>

@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.keyue.dao.UserDiaryMapper" >
+  <resultMap id="BaseResultMap" type="com.keyue.dao.model.UserDiary" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="secrecy_type" property="secrecyType" jdbcType="INTEGER" />
+    <result column="diary_date" property="diaryDate" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.keyue.dao.model.UserDiary" extends="BaseResultMap" >
+    <result column="content" property="content" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, user_id, secrecy_type, diary_date, update_time, create_time
+  </sql>
+  <sql id="Blob_Column_List" >
+    content
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from user_diary
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from user_diary
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.keyue.dao.model.UserDiary" >
+    insert into user_diary (id, user_id, secrecy_type,
+      diary_date, update_time, create_time,
+      content)
+    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{secrecyType,jdbcType=INTEGER},
+      #{diaryDate,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP},
+      #{content,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.keyue.dao.model.UserDiary" >
+    insert into user_diary
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="secrecyType != null" >
+        secrecy_type,
+      </if>
+      <if test="diaryDate != null" >
+        diary_date,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="content != null" >
+        content,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="secrecyType != null" >
+        #{secrecyType,jdbcType=INTEGER},
+      </if>
+      <if test="diaryDate != null" >
+        #{diaryDate,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="content != null" >
+        #{content,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.keyue.dao.model.UserDiary" >
+    update user_diary
+    <set >
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="secrecyType != null" >
+        secrecy_type = #{secrecyType,jdbcType=INTEGER},
+      </if>
+      <if test="diaryDate != null" >
+        diary_date = #{diaryDate,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="content != null" >
+        content = #{content,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.keyue.dao.model.UserDiary" >
+    update user_diary
+    set user_id = #{userId,jdbcType=INTEGER},
+      secrecy_type = #{secrecyType,jdbcType=INTEGER},
+      diary_date = #{diaryDate,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      content = #{content,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.keyue.dao.model.UserDiary" >
+    update user_diary
+    set user_id = #{userId,jdbcType=INTEGER},
+      secrecy_type = #{secrecyType,jdbcType=INTEGER},
+      diary_date = #{diaryDate,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <select id="selectByRecord" resultMap="BaseResultMap" parameterType="com.keyue.dao.model.UserDiary" >
+    select
+    <include refid="Base_Column_List" />
+    from user_diary
+    <where >
+      <if test="userId != null" >
+        and user_id = #{userId,jdbcType=INTEGER}
+      </if>
+      <if test="diaryDate != null" >
+        and diary_date = #{diaryDate,jdbcType=VARCHAR}
+      </if>
+    </where>
+  </select>
+
+  <select id="findByRecord" resultMap="ResultMapWithBLOBs" parameterType="com.keyue.dao.model.UserDiary" >
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from user_diary
+    <where >
+      <if test="userId != null" >
+        and user_id = #{userId,jdbcType=INTEGER}
+      </if>
+      <if test="diaryDate != null" >
+        and diary_date = #{diaryDate,jdbcType=VARCHAR}
+      </if>
+    </where>
+  </select>
+</mapper>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>修改可阅号</title>
+    <!-- 引入 WeUI -->
+    <link rel="stylesheet" href="https://res.wx.qq.com/open/libs/weui/2.3.0/weui.css"/>
+    <link href="//at.alicdn.com/t/font_2022896_14tqvgq3h0y.css" rel="stylesheet">
+    <style>
+        .page {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            box-sizing: border-box;
+            z-index: 1;
+        }
+        #close_btn{position: fixed; top: 10px; right: 16px;}
+        .icon-close{color: #ccc; font-size: 24px;}
+    </style>
+</head>
+<body>
+    <div class="page">
+        <div id="close_btn"><i class="iconfont icon-close back"></i></div>
+        <div class="weui-form">
+            <div class="weui-form__text-area">
+                <h2 class="weui-form__title">修改可阅号</h2>
+                <div class="weui-form__desc" th:text="${user.canUpdateKeno}? '可阅号修改后不可变更，请谨慎修改' : '默认可阅号已被修改，不可变更'"></div>
+            </div>
+            <div class="weui-form__control-area">
+                <div class="weui-cells__group weui-cells__group_form">
+                    <div class="weui-cells weui-cells_form">
+                        <div class="weui-cell weui-cell_active" th:if="${user.canUpdateKeno}">
+                            <input name="keno" class="weui-input" id="keno_input" placeholder="6~18位的字母或数字"/>
+                        </div>
+                        <div class="weui-cell weui-cell_active weui-cell_readonly" th:unless="${user.canUpdateKeno}">
+                            <input name="keno" class="weui-input" id="keno_input" placeholder="6~18位的字母或数字" th:value="${user.keno}" readonly/>
+                        </div>
+                    </div>
+                    <div class="weui-cells__tips" id="input_tips" hidden th:if="${user.canUpdateKeno}">6~18位的字母或数字</div>
+                </div>
+            </div>
+            <div class="weui-form__opr-area">
+                <a class="weui-btn weui-btn_primary" href="javascript:" id="submit_btn" th:if="${user.canUpdateKeno}">确定</a>
+            </div>
+        </div>
+        <div id="js_toast" style="display: none;">
+            <div class="weui-mask_transparent"></div>
+            <div class="weui-toast">
+                <i class="weui-icon-success-no-circle weui-icon_toast"></i>
+                <p class="weui-toast__content">已完成</p>
+            </div>
+        </div>
+    </div>
+    <!--begin toast-->
+    <div id="toast" style="display: none;">
+        <div class="weui-mask_transparent"></div>
+        <div class="weui-toast">
+            <i class="weui-icon-cancel weui-icon_toast" style="color: rgba(255,255,255,0.9);width: 55px;height: 55px;"></i>
+            <p class="weui-toast__content">修改失败</p>
+        </div>
+    </div>
+    <!--end toast-->
+    <!--begin dialog-->
+    <div id="dialogs">
+        <div class="js_dialog" id="confirm_dialog" style="display: none;">
+            <div class="weui-mask"></div>
+            <div class="weui-dialog">
+                <div class="weui-dialog__hd"><strong class="weui-dialog__title">确认修改</strong></div>
+                <div class="weui-dialog__bd">可阅号只有1次修改机会，修改后不可变更，确认修改？</div>
+                <div class="weui-dialog__ft">
+                    <a href="javascript:" class="weui-dialog__btn weui-dialog__btn_default" id="cancel_btn">取消</a>
+                    <a href="javascript:" class="weui-dialog__btn weui-dialog__btn_primary" id="confirm_btn">确认</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--end dialog-->
+    <script src="/libs/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" th:inline="javascript">
+        // 返回
+        $(".back").click(function(){
+            location.href="/user/userinfo";
+        });
+
+        function showToast(msg, timeout = 2000) {
+            $("#toast .weui-toast__content").html(msg);
+            $("#toast").fadeIn(100);
+            setTimeout(function () {
+                $("#toast").fadeOut(100);
+            }, timeout);
+        }
+
+        $(function () {
+            changeBtnStatus();
+            $("#keno_input").keyup(function(){
+                changeBtnStatus();
+            });
+
+            $("#submit_btn").click(function () {
+                if($(this).hasClass("weui-btn_disabled")){
+                    return;
+                }
+                $("#confirm_dialog").show();
+            });
+
+            $("#confirm_btn").click(function () {
+                var reqData = {"keno":$("#keno_input").val()};
+                $.ajax({
+                    type: "post",
+                    url: "/user/update",
+                    dataType: "json",
+                    data: reqData,
+                    success: function(result) {
+                        if(result.code == 0){
+                            location.href="/user/userinfo";
+                        }else{
+                            showToast(result.msg);
+                        }
+                    },
+                    error:function(msg){
+                        showToast('服务器出现异常');
+                    },
+                    complete:function(data){
+                        $("#confirm_dialog").hide();
+                    }
+                });
+            });
+
+            $("#cancel_btn").click(function () {
+                $("#confirm_dialog").hide();
+            });
+
+            function changeBtnStatus() {
+                var valLength = $("#keno_input").val().length;
+                if(valLength != 0){
+                    $("#input_tips").show();
+                }else{
+                    $("#input_tips").hide();
+                }
+                if(valLength < 6 || valLength > 18) {
+                    $("#submit_btn").addClass("weui-btn_disabled");
+                }else{
+                    $("#submit_btn").removeClass("weui-btn_disabled");
+                }
+            }
+
+        });
+    </script>
+</body>
+</html>

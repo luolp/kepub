@@ -1,30 +1,51 @@
 package com.keyue.service.impl;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.keyue.common.constant.SysConst;
 import com.keyue.common.constant.UserStatusConst;
+import com.keyue.common.enums.DiarySecrecyType;
 import com.keyue.common.util.RandomUtil;
 import com.keyue.common.util.RegexUtil;
 import com.keyue.component.MailSend;
 import com.keyue.component.RedisManager;
+import com.keyue.dao.UserDiaryMapper;
 import com.keyue.dao.UserMapper;
-import com.keyue.dao.model.User;
+import com.keyue.dao.UserReadHistoryMapper;
+import com.keyue.dao.UserVisitTimeLogMapper;
+import com.keyue.dao.model.*;
 import com.keyue.entity.MailEntity;
 import com.keyue.entity.ResultModel;
+import com.keyue.entity.VisitLogData;
+import com.keyue.entity.VisitLogRect;
 import com.keyue.entity.res.UserRes;
 import com.keyue.service.IUserService;
+import com.keyue.utils.DateUtil;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpSession;
+import java.lang.invoke.MethodHandles;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements IUserService {
+
+    // 显示的总格子数 = 20 * 7
+    public final static int SHOW_RECT_NUM = 140;
+    // 至少显示两列14个未来格子
+    public final static int FUTURE_RECT_NUM = 14;
 
     @Autowired
     MailSend mailSend;
@@ -32,6 +53,15 @@ public class UserServiceImpl implements IUserService {
     RedisManager redisManager;
     @Autowired
     UserMapper userMapper;
+    @Autowired
+    UserVisitTimeLogMapper userVisitTimeLogMapper;
+    @Autowired
+    UserDiaryMapper userDiaryMapper;
+    @Autowired
+    UserReadHistoryMapper userReadHistoryMapper;
+
+    @Value("${avatar.file.url}")
+    private String avatarFileUrl;
 
     private static final String ACTIVATION_CODE_PREFIX = "ACTIVATION_CODE_";
     private static final int ACTIVATION_CODE_EXPIRE = 30 * 60;
@@ -59,6 +89,93 @@ public class UserServiceImpl implements IUserService {
         }
         session.setAttribute(SysConst.USER_ID, existUser.getId());
         return ResultModel.success("登录成功");
+    }
+
+    @Override
+    public ResultModel<String> saveVisitTimeLog(UserVisitTimeLog userVisitTimeLog) {
+        int row = userVisitTimeLogMapper.insertSelective(userVisitTimeLog);
+        if (row == 0) {
+            return ResultModel.failed("保存失败");
+        }
+        return ResultModel.success("保存成功");
+    }
+
+    @Override
+    public ResultModel<String> saveDiary(UserDiary userDiary) {
+        userDiary.setSecrecyType(DiarySecrecyType.ONESELF.getId());
+        userDiary.setUpdateTime(new Date());
+
+        UserDiary record = new UserDiary();
+        record.setUserId(userDiary.getUserId());
+        record.setDiaryDate(userDiary.getDiaryDate());
+        UserDiary existUserDiary = userDiaryMapper.selectByRecord(record);
+
+        int row;
+        if(existUserDiary == null){
+            row = userDiaryMapper.insertSelective(userDiary);
+        }else{
+            userDiary.setId(existUserDiary.getId());
+            row = userDiaryMapper.updateByPrimaryKeySelective(userDiary);
+        }
+
+        if (row == 0) {
+            return ResultModel.failed("保存失败");
+        }
+        return ResultModel.success("保存成功");
+    }
+
+    @Override
+    public UserDiary findUserDiary(int userId, String date) {
+        UserDiary record = new UserDiary();
+        record.setUserId(userId);
+        record.setDiaryDate(date);
+        UserDiary userDiary = userDiaryMapper.findByRecord(record);
+        userDiary = userDiary == null ? new UserDiary() : userDiary;
+        return userDiary;
+    }
+
+    @Override
+    public void saveReadHistory(int userId, String bookNo, Integer chaptherNo) {
+        // 如果存在（userId、bookNo）,替换掉(逻辑删除)
+        UserReadHistory record = new UserReadHistory();
+        record.setUserId(userId);
+        record.setBookNo(bookNo);
+        userReadHistoryMapper.deleteByRecord(record);
+
+        UserReadHistory userReadHistory = new UserReadHistory();
+        userReadHistory.setUserId(userId);
+        userReadHistory.setBookNo(bookNo);
+        userReadHistory.setChapterNo(String.valueOf(chaptherNo));
+        userReadHistory.setLastReadTime(new Date());
+        userReadHistoryMapper.insertSelective(userReadHistory);
+    }
+
+    @Override
+    public ResultModel<List<UserReadHistory>> queryReadHistoryByPage(UserReadHistory userReadHistory, Integer page, Integer limit) {
+        ResultModel<List<UserReadHistory>> rm = new ResultModel<>();
+        Page<UserReadHistory> tPage = PageHelper.startPage(page, limit);
+        List<UserReadHistory> tList = userReadHistoryMapper.selectList(userReadHistory);
+        rm.setData(tList);
+        return rm;
+    }
+
+    @Override
+    public ResultModel<String> delReadHistory(Integer id) {
+        ResultModel<String> rm = new ResultModel<>();
+
+        UserReadHistory userReadHistory = new UserReadHistory();
+        userReadHistory.setId(id);
+        userReadHistory.setIsDel("1");
+        int row = userReadHistoryMapper.updateByPrimaryKeySelective(userReadHistory);
+
+        if(row>0){
+            rm.setMsg("删除成功");
+        }else{
+            rm.setCode(1);
+            rm.setMsg("删除失败");
+        }
+
+        return rm;
     }
 
     @Override
@@ -218,6 +335,7 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public UserRes getUser(int userId) {
+        // 用户基本信息
         UserRes userRes = null;
         User user = null;
         if(userId != 0){
@@ -226,18 +344,133 @@ public class UserServiceImpl implements IUserService {
         if(user != null){
             userRes = new UserRes();
             BeanUtils.copyProperties(user, userRes);
+            userRes.setAvatar(avatarFileUrl + userRes.getAvatar());
         }
         return userRes;
     }
 
+    /**
+     * 阅读时长网格（网格种类：rank0-未阅读，rank1-一级，rank2-二级，rank3-三级，rank4-四级，empty-空格）
+     * @param userId 用户ID
+     * @param regTime 注册时间
+     */
+    @Override
+    public List<VisitLogRect> queryVisitLog(int userId, Date regTime) {
+        // 为补全格子，在注册日期前面加preEmptyNum个空格
+        Date curTime = new Date();
+        int regWeek = DateUtil.getWeekOfDate(regTime);
+        int curWeek = DateUtil.getWeekOfDate(curTime);
+        int preEmptyNum = regWeek - 1;
+        int nextEmptyNum = 7 - curWeek;
+
+        List<VisitLogRect> rects = new ArrayList<>();
+        // 空的格子（前面补）
+        int preRectIndex = 0;
+        while(preRectIndex < preEmptyNum)
+        {
+            VisitLogRect rect = new VisitLogRect();
+            rect.setRectType("empty");
+            rects.add(rect);
+            preRectIndex++;
+        }
+        // 注册日期到当前日期的格子
+        List<VisitLogData> logDataList = userVisitTimeLogMapper.queryVisitLog(userId);
+        Map<String, VisitLogData> dataMap =
+                logDataList.stream().collect(Collectors.toMap(VisitLogData::getRecordDate,
+                Function.identity(), (o1, o2) -> o1));
+        List<String> dateList = DateUtil.getDateList(regTime, curTime);
+        for (String date : dateList) {
+            VisitLogData logData = dataMap.get(date);
+            VisitLogRect rect = new VisitLogRect();
+            rect.setRecordDate(date);
+            if(logData != null) {
+                int dayVisitDuration = logData.getTotalDuration() == null ? 0 : logData.getTotalDuration();
+                rect.setTotalDuration(dayVisitDuration);
+                String rectType = "rank0";
+                if(dayVisitDuration >= 3 * 60 * 60) {
+                    rectType = "rank4";
+                } else if(dayVisitDuration >= 2 * 60 * 60) {
+                    rectType = "rank3";
+                } else if(dayVisitDuration >= 60 * 60) {
+                    rectType = "rank2";
+                } else if(dayVisitDuration > 0) {
+                    rectType = "rank1";
+                }
+                rect.setRectType(rectType);
+            } else {
+                rect.setTotalDuration(0);
+                rect.setRectType("rank0");
+            }
+
+            rects.add(rect);
+        }
+
+        // 空的格子（后面未到）
+        int hasRectNum = DateUtil.daysDiff(regTime, curTime) + 1 + preRectIndex;
+        int futureNum = 0;
+        if(hasRectNum > SHOW_RECT_NUM - FUTURE_RECT_NUM) {
+            futureNum = FUTURE_RECT_NUM + nextEmptyNum;
+        } else {
+            futureNum = SHOW_RECT_NUM - hasRectNum;
+        }
+        int futureRectIndex = 0;
+        while(futureRectIndex < futureNum)
+        {
+            VisitLogRect rect = new VisitLogRect();
+            rect.setRectType("empty");
+            rects.add(rect);
+            futureRectIndex++;
+        }
+        return rects;
+    }
+
+    @Override
+    public ResultModel<String> updateUser(User user) {
+        if(user.getNickname() != null && !RegexUtil.isNickname(user.getNickname())){
+            return ResultModel.failed("请输入1~20位的昵称");
+        }
+        if(user.getKeno() != null){
+            User existUser = userMapper.selectByPrimaryKey(user.getId());
+            if(!existUser.getKeno().startsWith("keid_")){
+                return ResultModel.failed("可阅号不可修改");
+            }
+            if(!RegexUtil.isKeno(user.getKeno())){
+                return ResultModel.failed("可阅号必须为6~18位的字母或数字");
+            }
+            if(isExistKeno(user.getKeno())) {
+                return ResultModel.failed(user.getKeno() + "已被使用");
+            }
+        }
+        int ret = userMapper.updateByPrimaryKeySelective(user);
+        if(ret>0){
+            return ResultModel.success("修改成功");
+        }
+        return ResultModel.failed("修改失败");
+    }
+
+    private boolean isExistKeno(String keno) {
+        User record = new User();
+        record.setKeno(keno);
+        User user = userMapper.findByRecord(record);
+        if(user != null) {
+            return true;
+        }
+        return false;
+    }
+
     public static void main(String[] args) {
-        String code = RandomUtil.lengthString(32);
-        String link = "http://m.liulangcat.com/user/activate.php?code=" + code;
-        String mailContent = String.format("<p>您好，欢迎注册可阅!</p>" +
-                "<p>请点击下面的链接完成注册：</p>" +
-                "<a href='%s'>%s</a>" +
-                "<p>如果以上链接无法点击，请将上面的地址复制到你的浏览器的地址栏</p>", link, link);
-        System.out.println(mailContent);
+//        String code = RandomUtil.lengthString(32);
+//        String link = "http://m.liulangcat.com/user/activate.php?code=" + code;
+//        String mailContent = String.format("<p>您好，欢迎注册可阅!</p>" +
+//                "<p>请点击下面的链接完成注册：</p>" +
+//                "<a href='%s'>%s</a>" +
+//                "<p>如果以上链接无法点击，请将上面的地址复制到你的浏览器的地址栏</p>", link, link);
+//        System.out.println(mailContent);
+
+        Date beginDate = DateUtil.strToDate("2019-08-31 21:01:09", DateUtil.FRONT_DATE_FORMAT_STRING);
+        Date endDate = new Date();
+        System.out.println(DateUtil.daysDiff(beginDate, endDate));
+        System.out.println(DateUtil.getDateList(beginDate, endDate));
 
     }
 }

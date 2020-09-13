@@ -1,150 +1,132 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.keyue.dao.BookChapterMapper" >
-  <resultMap id="BaseResultMap" type="com.keyue.dao.model.BookChapter" >
-    <id column="id" property="id" jdbcType="INTEGER" />
-    <result column="book_no" property="bookNo" jdbcType="VARCHAR" />
-    <result column="chapter_no" property="chapterNo" jdbcType="INTEGER" />
-    <result column="chapter_name" property="chapterName" jdbcType="VARCHAR" />
-    <result column="chapter_no_2" property="chapterNo2" jdbcType="INTEGER" />
-    <result column="father_no" property="fatherNo" jdbcType="INTEGER" />
-    <result column="is_has_content" property="isHasContent" jdbcType="INTEGER" />
-    <result column="file_url" property="fileUrl" jdbcType="VARCHAR" />
-    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.keyue.dao.BookChapterMapper">
+  <resultMap id="BaseResultMap" type="com.keyue.dao.model.BookChapter">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="book_no" jdbcType="VARCHAR" property="bookNo" />
+    <result column="chapter_no" jdbcType="INTEGER" property="chapterNo" />
+    <result column="chapter_name" jdbcType="VARCHAR" property="chapterName" />
+    <result column="parent_no" jdbcType="INTEGER" property="parentNo" />
+    <result column="file_url" jdbcType="VARCHAR" property="fileUrl" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
   </resultMap>
-  <sql id="Base_Column_List" >
-    id, book_no, chapter_no, chapter_name, chapter_no_2, father_no, is_has_content, file_url, 
-    create_time
+  <sql id="Base_Column_List">
+    id, book_no, chapter_no, chapter_name, parent_no, file_url, create_time
   </sql>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
-    select 
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
     <include refid="Base_Column_List" />
     from book_chapter
     where id = #{id,jdbcType=INTEGER}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from book_chapter
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.keyue.dao.model.BookChapter" >
-    insert into book_chapter (id, book_no, chapter_no, 
-      chapter_name, chapter_no_2, father_no, 
-      is_has_content, file_url, create_time
-      )
-    values (#{id,jdbcType=INTEGER}, #{bookNo,jdbcType=VARCHAR}, #{chapterNo,jdbcType=INTEGER}, 
-      #{chapterName,jdbcType=VARCHAR}, #{chapterNo2,jdbcType=INTEGER}, #{fatherNo,jdbcType=INTEGER}, 
-      #{isHasContent,jdbcType=INTEGER}, #{fileUrl,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}
-      )
+  <insert id="insert" parameterType="com.keyue.dao.model.BookChapter">
+    insert into book_chapter (id, book_no, chapter_no,
+      chapter_name, parent_no, file_url,
+      create_time)
+    values (#{id,jdbcType=INTEGER}, #{bookNo,jdbcType=VARCHAR}, #{chapterNo,jdbcType=INTEGER},
+      #{chapterName,jdbcType=VARCHAR}, #{parentNo,jdbcType=INTEGER}, #{fileUrl,jdbcType=VARCHAR},
+      #{createTime,jdbcType=TIMESTAMP})
   </insert>
-  <insert id="insertSelective" parameterType="com.keyue.dao.model.BookChapter" >
+  <insert id="insertSelective" parameterType="com.keyue.dao.model.BookChapter">
     insert into book_chapter
-    <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
         id,
       </if>
-      <if test="bookNo != null" >
+      <if test="bookNo != null">
         book_no,
       </if>
-      <if test="chapterNo != null" >
+      <if test="chapterNo != null">
         chapter_no,
       </if>
-      <if test="chapterName != null" >
+      <if test="chapterName != null">
         chapter_name,
       </if>
-      <if test="chapterNo2 != null" >
-        chapter_no_2,
+      <if test="parentNo != null">
+        parent_no,
       </if>
-      <if test="fatherNo != null" >
-        father_no,
-      </if>
-      <if test="isHasContent != null" >
-        is_has_content,
-      </if>
-      <if test="fileUrl != null" >
+      <if test="fileUrl != null">
         file_url,
       </if>
-      <if test="createTime != null" >
+      <if test="createTime != null">
         create_time,
       </if>
     </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
         #{id,jdbcType=INTEGER},
       </if>
-      <if test="bookNo != null" >
+      <if test="bookNo != null">
         #{bookNo,jdbcType=VARCHAR},
       </if>
-      <if test="chapterNo != null" >
+      <if test="chapterNo != null">
         #{chapterNo,jdbcType=INTEGER},
       </if>
-      <if test="chapterName != null" >
+      <if test="chapterName != null">
         #{chapterName,jdbcType=VARCHAR},
       </if>
-      <if test="chapterNo2 != null" >
-        #{chapterNo2,jdbcType=INTEGER},
+      <if test="parentNo != null">
+        #{parentNo,jdbcType=INTEGER},
       </if>
-      <if test="fatherNo != null" >
-        #{fatherNo,jdbcType=INTEGER},
-      </if>
-      <if test="isHasContent != null" >
-        #{isHasContent,jdbcType=INTEGER},
-      </if>
-      <if test="fileUrl != null" >
+      <if test="fileUrl != null">
         #{fileUrl,jdbcType=VARCHAR},
       </if>
-      <if test="createTime != null" >
+      <if test="createTime != null">
         #{createTime,jdbcType=TIMESTAMP},
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.keyue.dao.model.BookChapter" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.keyue.dao.model.BookChapter">
     update book_chapter
-    <set >
-      <if test="bookNo != null" >
+    <set>
+      <if test="bookNo != null">
         book_no = #{bookNo,jdbcType=VARCHAR},
       </if>
-      <if test="chapterNo != null" >
+      <if test="chapterNo != null">
         chapter_no = #{chapterNo,jdbcType=INTEGER},
       </if>
-      <if test="chapterName != null" >
+      <if test="chapterName != null">
         chapter_name = #{chapterName,jdbcType=VARCHAR},
       </if>
-      <if test="chapterNo2 != null" >
-        chapter_no_2 = #{chapterNo2,jdbcType=INTEGER},
+      <if test="parentNo != null">
+        parent_no = #{parentNo,jdbcType=INTEGER},
       </if>
-      <if test="fatherNo != null" >
-        father_no = #{fatherNo,jdbcType=INTEGER},
-      </if>
-      <if test="isHasContent != null" >
-        is_has_content = #{isHasContent,jdbcType=INTEGER},
-      </if>
-      <if test="fileUrl != null" >
+      <if test="fileUrl != null">
         file_url = #{fileUrl,jdbcType=VARCHAR},
       </if>
-      <if test="createTime != null" >
+      <if test="createTime != null">
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.keyue.dao.model.BookChapter" >
+  <update id="updateByPrimaryKey" parameterType="com.keyue.dao.model.BookChapter">
     update book_chapter
     set book_no = #{bookNo,jdbcType=VARCHAR},
       chapter_no = #{chapterNo,jdbcType=INTEGER},
       chapter_name = #{chapterName,jdbcType=VARCHAR},
-      chapter_no_2 = #{chapterNo2,jdbcType=INTEGER},
-      father_no = #{fatherNo,jdbcType=INTEGER},
-      is_has_content = #{isHasContent,jdbcType=INTEGER},
+      parent_no = #{parentNo,jdbcType=INTEGER},
       file_url = #{fileUrl,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>
 
-  <select id="queryChapterListByBookNo" resultMap="BaseResultMap"  >
+  <select id="queryChapterListByBookNo" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
     from book_chapter
     where book_no = #{bookNo}
   </select>
 
+  <!-- 随机取一条数据 -->
+  <select id="randomChapter" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from book_chapter
+    join (select round(rand()*(select max(id) from book_chapter)) as idd) as temp_table on book_chapter.id>temp_table.idd limit 1;
+  </select>
 </mapper>

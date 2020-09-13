@@ -2,13 +2,12 @@
 
 <html>
 <head>
-    <title>liulangcat_搜索</title>
+    <title>可阅_搜索</title>
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
     <meta name="keywords" content="书籍搜索，搜小说，搜作者">
     <link href="libs/font-awesome/css/font-awesome.css" rel="stylesheet">
     <link href="css/base.css" rel="stylesheet">
     <link href="css/page/search.css" rel="stylesheet">
-    <script src="libs/jquery-3.2.1.min.js"></script>
 </head>
 <body>
 <!--顶部 start-->
@@ -17,7 +16,7 @@
         <i class="fa fa-angle-left back"></i>
         <div class="search-b" >
             <form class="search-form" action="" method="get" th:inline="text">
-            <input class="search-input" type="text" name="keyword" placeholder="输入书名、作者" value="[[${keyword}]]">
+            <input class="search-input" type="text" name="keyword" placeholder="输入书名、作者" th:value="${keyword}">
             </form>
             <i class="fa fa-search submit"></i>
         </div>
@@ -29,8 +28,7 @@
     <ul class="result-list">
         <li th:each="book : ${books}">
             <div class="info" th:data_href="@{${book.bookFilePath}}">
-                <a class="bookname" th:href="@{${book.bookFilePath}}" th:text="${book.bookName}" />
-                <a class="author" th:href="@{${book.authorPagePath}}" th:text="${book.authorName}" />
+                <a class="bookname" th:href="@{${book.bookFilePath}}" th:text="${book.bookName}" /><a class="author" th:href="@{${book.authorPagePath}}" th:text="'[' + ${book.authorName} + ']'" />
             </div>
             <div class="desc" th:text="${book.bookDesc}" />
         </li>
@@ -43,7 +41,7 @@
         </dd>
     </dl>
 </div>
-<input class="current-page" type="hidden" value="0">
+<input class="current-page" type="hidden" value="1">
 <!-- 中间区域 end -->
 <!-- 流量统计 -->
 <div style="display:none">
@@ -52,6 +50,7 @@
         document.write(unescape("%3Cspan id='cnzz_stat_icon_1256702543'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s95.cnzz.com/z_stat.php%3Fid%3D1256702543' type='text/javascript'%3E%3C/script%3E"));
     </script>
 <div>
+<script src="libs/jquery-3.2.1.min.js"></script>
 <script type="text/javascript" th:inline="javascript">
     $(function(){
         // 标识正在加载下一页
@@ -86,15 +85,15 @@
             var c_page=$(".current-page").val();
             c_page=parseInt(c_page)+1;
             $.ajax({
-                url:'get/get_search_result?page='+c_page+'&keyword=' + /*[[${keyword}]]*/"",
+                url:'/queryBookByPage?page='+c_page+'&keyword=' + /*[[${keyword}]]*/"",
                 dataType:'json',
                 success:function(result){
                     var html="";
-                    $.each(result, function(index,item)
+                    $.each(result.data, function(index,item)
                     {
-                        html="<li><div class=\"info\" data-href=\"" +item.bookFilePath+"\">";
-                        html+="<a class=\"bookname\" href=\"" +item.bookFilePath+"\">"+item.bookName+"</a>";
-                        html+="<a class=\"author\" href=\""+item.authorPagePath + "\">" + "["+item.authorName+"]</a>";
+                        html="<li><div class=\"info\" data-href=\"" + item.bookFilePath + "\">";
+                        html+="<a class=\"bookname\" href=\"" + item.bookFilePath + "\">"+item.bookName+"</a>";
+                        html+="<a class=\"author\" href=\""+item.authorPagePath + "\">["+item.authorName+"]</a>";
                         html+="</div>";
                         html+="<div class=\"desc\">"+item.bookDesc+"</div>";
                         html+="</li>";
