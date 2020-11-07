@@ -68,16 +68,6 @@
             $(window).scrollTop(read_pos_top);
         }
 
-        $(".main_block").on('click','.marker',function(){
-            $(this).removeClass('marker');
-            $(this).addClass('marker_show');
-            $(this).html($(this).data('v'));
-        });
-        $(".main_block").on('click','.marker_show',function(){
-            $(this).removeClass('marker_show');
-            $(this).addClass('marker');
-            $(this).html('注');
-        });
         // 上报阅读时长
         var noRecordDuration = 0; // 未上报的阅读时长（秒）
         var noScrollDuration = 0; // 屏幕未滚动的时长（秒）
@@ -114,6 +104,17 @@
 
             lastScrollTime = (new Date()).getTime();
             localStorage.setItem("read_pos_top_" + bookNo + "_" + chapterNo, $(window).scrollTop());
+        });
+
+        $(".main_block").on('click','.marker',function(){
+            $(this).removeClass('marker');
+            $(this).addClass('marker_show');
+            $(this).html($(this).data('v'));
+        });
+        $(".main_block").on('click','.marker_show',function(){
+            $(this).removeClass('marker_show');
+            $(this).addClass('marker');
+            $(this).html('注');
         });
 	});
 </script>
